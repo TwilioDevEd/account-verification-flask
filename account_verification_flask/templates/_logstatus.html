@@ -1,0 +1,11 @@
+﻿<form action="/logout" method="POST" id="logoutForm" class="navbar-right"></form>
+ {% if current_user.is_authenticated %}
+    <ul class="nav navbar-nav navbar-right">
+        <li><a>Logged as {{ current_user.name }}</a></li>
+        <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+    </ul>
+{% else %}
+    <ul class="nav navbar-nav navbar-right">
+        <li><a href="{{ url_for('register') }}">Sign Up</a></li>
+    </ul>
+{% endif %}
