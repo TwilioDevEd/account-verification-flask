@@ -33,7 +33,7 @@ class User(db.Model):
         return False
  
     def get_id(self):
-        return ensure_utf(self.id)
+        return unicode(self.id)
         
     def confirm_phone_number(self):
         self.phone_number_confirmed =  True

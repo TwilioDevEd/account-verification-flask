@@ -6,7 +6,7 @@ from account_verification_flask import app, db, login_manager
 from .forms import RegisterForm
 from .models import User
 from .messages import ApplicationMessages
-from .authy_services import AuthyServices
+#from .authy_services import AuthyServices
 
 @app.route('/')
 @app.route('/home')
@@ -32,7 +32,10 @@ def register():
             )
             db.session.add(user)
             db.session.commit()
-            login_user(user, remember=True)
+            login_user(user, remember=True, force=True)
+            idattr = getattr(user, login_manager.id_attribute)()
+            anot = getattr(user, login_manager.id_attribute)
+            print(session['user_id'])
             return redirect(url_for('home'))
 
             #authy_services = AuthyServices()
