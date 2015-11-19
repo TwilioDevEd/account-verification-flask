@@ -1,0 +1,31 @@
+﻿{% extends "layout.html" %}
+
+{% block content %}
+
+<form method="POST" class="form-horizontal" role="form" action="/resend">
+    {% from "_formhelpers.html" import render_errors, render_field %}
+    {{ form.csrf_token }}
+    {{ render_errors(form) }}
+    <hr />
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-info">
+        {% for message in messages %}
+        {{ message }}<br />
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {{ render_field(form.email, placeholder='darth@vader.com') }}
+
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default" value="Submit" />
+        </div>
+    </div>
+</form>
+
+{% endblock %}

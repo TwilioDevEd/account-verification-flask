@@ -7,3 +7,4 @@
     User_Not_Found_For_Given_Email = "Failed to find a user associated with the provided email."
     Signup_Complete = "You did it! Signup complete :)"
     User_Email_Already_In_Use="The provided E-mail is already in use by another user."
+    Verification_Unsuccessful="Verification unsucessfull. Request a new code and try again"

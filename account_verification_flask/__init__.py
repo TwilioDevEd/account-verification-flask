@@ -6,7 +6,11 @@ from flask.ext.bcrypt import Bcrypt
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '!^%@*!&$852438#(&^874@#^&*($@*(@&^@)(&*)Y_)((+'
-app.config['AUTHY_KEY'] = 'xqkRlsYfUu6r64Ueh4XfKewbvq7uvEKe'
+app.config['AUTHY_KEY'] = 'fdfdfdfdfdfdfd'
+
+app.config['TWILIO_ACCOUNT_SID'] = 'bla'
+app.config['TWILIO_AUTH_TOKEN'] = 'bla'
+app.config['TWILIO_NUMBER'] = 'bla'
 
 # Create in-memory database
 app.config['DATABASE_FILE'] = 'D:\\WORK\\account_verification.db'

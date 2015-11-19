@@ -1,27 +1,36 @@
-﻿#from authy.api import AuthyApiClient
-#from account_verification_flask import app
+﻿from authy.api import AuthyApiClient
+from account_verification_flask import app
+from .messages import ApplicationMessages
+from .settings import AuthySettings
 
-#class AuthyServices:
-#    __authy_client = None
+class AuthyServices:
+    authy_client = None
+    instance = None
 
-#    def __init__(delf):
-#        if authy_client == None:
-#            authy_client = AuthyApiClient(app.config['AUTHY_KEY'] )
+    def __init__(delf):
+        if AuthyServices.authy_client == None:
+            AuthyServices.authy_client = AuthyApiClient(AuthySettings.key)
 
-#    def request_phone_confirmation_code(self, user):
-#        if user.authy_user_id == None:
-#            if _register_user_under_authy(user):
-#                sms = authy_client.users.request_sms(user.authy_user_id, {'force': True})
-#                return not sms.ignored()
-#        return False
+    def request_phone_confirmation_code(self, user):
+        if user == None:
+            raise ValueError(ApplicationMessages.User_Id_Not_Found)
 
-#    def _register_user_under_authy(self, user):
-#        authy_user = authy_client.users.create(user.email, user.phone_number, user.country_code)
+        if user.authy_user_id == None:
+            self._register_user_under_authy(user)
 
-#        if authy_user.ok:
-#            user.authy_user_id = authy_user.id
-#            return True;
-        
-#        return False;
+        sms = AuthyServices.authy_client.users.request_sms(user.authy_user_id, {'force': True})
+        return not sms.ignored()
 
+    def confirm_phone_number(self, user, verification_code):
+        if user == None:
+            raise ValueError(ApplicationMessages.User_Id_Not_Found)
+
+        verification = AuthyServices.authy_client.tokens.verify(user.authy_user_id, verification_code)
+        return verification.ok()
+
+    def _register_user_under_authy(self, user):
+        authy_user = AuthyServices.authy_client.users.create(user.email, user.phone_number, user.country_code)
+        if authy_user.ok:
+            user.authy_user_id = authy_user.id
+       
 

@@ -1,6 +1,5 @@
 ﻿#from flask.ext.login import UserMixin
 from account_verification_flask import db, bcrypt
-from .utils import ensure_utf
 
 class User(db.Model):
 

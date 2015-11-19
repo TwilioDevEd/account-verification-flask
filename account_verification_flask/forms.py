@@ -25,3 +25,19 @@ class RegisterForm(Form):
         'Phone Number',
         validators=[DataRequired("Valid phone number is required")]
     )
+
+class ResendCodeForm(Form):
+    email = TextField(
+        'E-mail',
+        validators=[DataRequired("E-mail is required"), Email(message="Invalid E-mail address")]
+    )
+
+class VerifyRegistrationCodeForm(ResendCodeForm):
+    verification_code = TextField(
+        'Verification Code',
+        validators=[DataRequired("Verification code is required")]
+    )
+
+
+    
+

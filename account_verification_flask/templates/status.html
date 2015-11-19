@@ -1,0 +1,16 @@
+﻿{% extends "layout.html" %}
+
+{% block content %}
+
+{% if current_user.is_authenticated %}
+<h4>
+    Dear {{current_user.email}}, your account has been succesfully verified.
+</h4>
+{% else %}
+<h4>
+    <a href="/verify">Verify your account now</a>
+</h4>
+{% endif %}
+
+{% endblock %}
+
