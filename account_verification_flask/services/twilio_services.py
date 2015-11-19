@@ -1,8 +1,9 @@
 ﻿from authy.api import AuthyApiClient
-from account_verification_flask import app
-from .messages import ApplicationMessages
-from .settings import AuthySettings, TwilioSettings
 from twilio.rest import TwilioRestClient
+
+from account_verification_flask import app
+from account_verification_flask.utilities.messages import ApplicationMessages
+from account_verification_flask.utilities.settings import AuthySettings, TwilioSettings
 
 class TwilioServices:
     twilio_client = None

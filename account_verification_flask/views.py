@@ -4,12 +4,13 @@ from flask.ext.login import login_user , logout_user, current_user, login_requir
  
 
 from account_verification_flask import app, db, login_manager
-from .forms import RegisterForm, VerifyCodeForm, ResendCodeForm
-from .models import User
-from .messages import ApplicationMessages
-from .authy_services import AuthyServices
-from .twilio_services import TwilioServices
-from .controller_helpers import redirect_to, view
+from account_verification_flask.forms import RegisterForm, ResendCodeForm, VerifyCodeForm
+from  account_verification_flask.models.models import User
+from account_verification_flask.services.authy_services import AuthyServices
+from account_verification_flask.services.twilio_services import TwilioServices
+
+from account_verification_flask.utilities.messages import *
+from account_verification_flask.utilities.controller_helpers import *
 
 
 @app.route('/')
@@ -122,7 +123,6 @@ def logout():
 
 @app.before_request
 def before_request():
-    u = User.query.get(22)
     g.user = current_user
 
 @login_manager.user_loader
