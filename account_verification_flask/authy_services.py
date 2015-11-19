@@ -5,9 +5,8 @@ from .settings import AuthySettings
 
 class AuthyServices:
     authy_client = None
-    instance = None
 
-    def __init__(delf):
+    def __init__(self):
         if AuthyServices.authy_client == None:
             AuthyServices.authy_client = AuthyApiClient(AuthySettings.key)
 
