@@ -1,7 +1,6 @@
 ﻿from datetime import datetime
 from flask import session, request, flash, url_for, abort ,g
 from flask.ext.login import login_user , logout_user, current_user, login_required
- 
 
 from account_verification_flask import app, db, login_manager
 from account_verification_flask.forms.forms import RegisterForm, ResendCodeForm, VerifyCodeForm
@@ -17,7 +16,6 @@ from account_verification_flask.utilities.controller_helpers import *
 @app.route('/home')
 def home():
     return view('index')  
-
 
 @app.route('/register', methods=["GET", "POST"])
 def register():
@@ -67,11 +65,11 @@ def verify():
                 form.email.errors.append(ApplicationMessages.User_Already_Confirmed)
                 return view('verify_registration_code', form)
 
-            if AuthyServices().confirm_phone_number(user, form.verification_code.data):
+            if AuthyServices.new().confirm_phone_number(user, form.verification_code.data):
                 user.phone_number_confirmed = True
                 db.session.commit()
                 login_user(user, remember=True)
-                TwilioServices().send_registration_success_sms("+{0}{1}".format(user.country_code, user.phone_number))
+                TwilioServices.new().send_registration_success_sms("+{0}{1}".format(user.country_code, user.phone_number))
                 return redirect_to('status')
             else:
                 form.email.errors.append(ApplicationMessages.Verification_Unsuccessful)
@@ -79,7 +77,6 @@ def verify():
     else:
         form.email.data = request.args.get('email')
     return view('verify_registration_code', form)  
-
 
 @app.route('/resend', methods=["GET", "POST"])
 @app.route('/resend/<email>', methods=["GET"])
@@ -112,15 +109,12 @@ def resend(email=""):
 def status():
     return view('status')  
 
-
 @app.route('/logout', methods=["POST"])
 def logout():
     logout_user()
     return redirect_to('home') 
 
-
-# utilities
-
+# controller utils
 @app.before_request
 def before_request():
     g.user = current_user

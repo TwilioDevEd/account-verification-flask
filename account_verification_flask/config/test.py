@@ -1,4 +1,4 @@
-﻿DATABASE_FILE = ':memory:'
+﻿SQLALCHEMY_DATABASE_URI = 'sqlite://'
 SQLALCHEMY_ECHO = True
 
 DEBUG = True

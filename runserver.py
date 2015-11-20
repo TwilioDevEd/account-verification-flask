@@ -3,7 +3,7 @@ This script runs the account_verification_flask application using a development 
 """
 
 from os import environ
-from account_verification_flask import app, create_app
+from account_verification_flask import app
 
 if __name__ == '__main__':
     HOST = environ.get('SERVER_HOST', 'localhost')

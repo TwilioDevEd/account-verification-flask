@@ -2,7 +2,6 @@
 from wtforms import TextField, PasswordField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
-
 class RegisterForm(Form):
     name = TextField(
         'Tell us your name',

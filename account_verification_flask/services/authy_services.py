@@ -31,5 +31,9 @@ class AuthyServices:
         authy_user = AuthyServices.authy_client.users.create(user.email, user.phone_number, user.country_code)
         if authy_user.ok:
             user.authy_user_id = authy_user.id
+
+    @staticmethod
+    def new():
+        return AuthyServices()
        
 

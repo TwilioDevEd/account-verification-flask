@@ -1,7 +1,10 @@
-﻿from flask import Flask
+﻿"""
+This script holds the commands nedeed for runnin the migrations and the tests
+"""
+
+from flask import Flask
 from flask.ext.script import Manager
 from flask.ext.migrate import Migrate, MigrateCommand
-
 from account_verification_flask import app, db
 
 migrate = Migrate(app, db)

@@ -8,7 +8,7 @@ db = SQLAlchemy()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
 
-def create_app(config_name):
+def create_app(config_name='default', p_db = db, p_bcrypt = bcrypt, p_login_manager = login_manager):
     new_app = Flask(__name__)
     new_app.config.from_object(config_env_files['default'])
 
@@ -16,13 +16,12 @@ def create_app(config_name):
         new_app.config.from_object(config_env_files[config_name])
         
     new_app.config.from_object(config_env_files['local'])
-    db.init_app(new_app)
-    bcrypt.init_app(new_app)
-    login_manager.init_app(new_app)
-    login_manager.login_view = 'register'
+    p_db.init_app(new_app)
+    p_bcrypt.init_app(new_app)
+    p_login_manager.init_app(new_app)
+    p_login_manager.login_view = 'register'
     return new_app
-    
 
-app = create_app('default')
+app = create_app()
 
 import account_verification_flask.views
