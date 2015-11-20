@@ -8,7 +8,7 @@ class AuthyServices:
 
     def __init__(self):
         if AuthyServices.authy_client == None:
-            AuthyServices.authy_client = AuthyApiClient(AuthySettings.key)
+            AuthyServices.authy_client = AuthyApiClient(AuthySettings.key())
 
     def request_phone_confirmation_code(self, user):
         if user == None:

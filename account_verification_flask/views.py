@@ -4,7 +4,7 @@ from flask.ext.login import login_user , logout_user, current_user, login_requir
  
 
 from account_verification_flask import app, db, login_manager
-from account_verification_flask.forms import RegisterForm, ResendCodeForm, VerifyCodeForm
+from account_verification_flask.forms.forms import RegisterForm, ResendCodeForm, VerifyCodeForm
 from  account_verification_flask.models.models import User
 from account_verification_flask.services.authy_services import AuthyServices
 from account_verification_flask.services.twilio_services import TwilioServices

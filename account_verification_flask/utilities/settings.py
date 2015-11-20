@@ -1,11 +1,19 @@
 ﻿from account_verification_flask import app
 
 class AuthySettings:
-    key = app.config['AUTHY_KEY']
+    @staticmethod
+    def key():
+        return app.config['AUTHY_KEY']
 
 class TwilioSettings:
-    account_sid=app.config['TWILIO_ACCOUNT_SID']
+    @staticmethod
+    def account_sid():
+        return app.config['TWILIO_ACCOUNT_SID']
+    
+    @staticmethod
+    def auth_token():
+        return app.config['TWILIO_AUTH_TOKEN']
 
-    auth_token=app.config['TWILIO_AUTH_TOKEN']
-
-    phone_number=app.config['TWILIO_NUMBER']
+    @staticmethod
+    def phone_number():
+        return app.config['TWILIO_NUMBER']
