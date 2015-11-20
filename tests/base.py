@@ -12,9 +12,6 @@ class BaseTestCase(TestCase):
 
     def setUp(self):
         db.create_all()
-        #db.session.add(User("admin", "ad@min.com", "admin"))
-        #db.session.commit()
 
     def tearDown(self):
-        #db.session.remove()
         db.drop_all()

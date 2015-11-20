@@ -39,8 +39,7 @@ To run the app locally, first clone this repository and `cd` into its directory.
     pip install -r requirements.txt
     ```
 
-1. Create a `local.py` file inside the  `account_verification_flask/config` directory and add it the following 
-content. Be sure to replace the place holders and connection string with real information
+1. Edit the `local.py` file inside the  `account_verification_flask/config` directory. Be sure to replace the place holders and connection string with real information
 
     ```
     AUTHY_KEY = 'your_authy_key'
@@ -69,8 +68,6 @@ That's it
 ## Run the tests
 
 You can run the tests locally through [coverage](http://coverage.readthedocs.org/):
-
-1. Optionally create a separate test database and update your `DATABASE_URL` environment variable if you don't want your development data overwritten
 
 1. Run the tests:
 

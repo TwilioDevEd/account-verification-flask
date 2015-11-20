@@ -2,7 +2,6 @@
 from flask.ext.login import current_user
 from flask import request, url_for
 from flask.testing import FlaskClient
-from account_verification_flask import app, create_app
 from base import BaseTestCase
 
 class ViewsTests(BaseTestCase):
