@@ -60,7 +60,7 @@ To run the app locally, first clone this repository and `cd` into its directory.
 1. Start the development server
 
     ```
-    python runserver.py
+    python manage.py runserver
     ```
 
 That's it
