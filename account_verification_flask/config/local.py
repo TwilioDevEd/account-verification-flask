@@ -6,4 +6,3 @@ TWILIO_AUTH_TOKEN = 'your_twilio_auth_token'
 TWILIO_NUMBER = 'your_twilio_phone_number'
 
 SQLALCHEMY_DATABASE_URI = 'sqlite://'
-SQLALCHEMY_ECHO = True
