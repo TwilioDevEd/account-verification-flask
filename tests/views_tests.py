@@ -38,18 +38,5 @@ class ViewsTests(BaseTestCase):
         # assert
         self.assert_template_used('status.html')
 
-    ## Ensures /status renders the correct view
-    #def test_register_redirects_to_verifiy_view(self):
-    #    response = self.client.post('/register', 
-    #                                data=dict(name="name", 
-    #                                     email="user@email.com", 
-    #                                     password="password",
-    #                                     country_code="1",
-    #                                     phone_number="54654646464"),
-    #                                follow_redirects=True)
-
-    #    #assert response.request.path == url_for('verify', email="user@email.com"))
-    #    self.assertRedirects(response,url_for('verify', email="user@email.com"))
-
 if __name__ == '__main__':
     unittest.main()   

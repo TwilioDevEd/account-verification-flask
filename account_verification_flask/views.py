@@ -17,22 +17,22 @@ from account_verification_flask.utilities.controller_helpers import *
 def home():
     return view('index')  
 
-@app.route('/register', methods=["GET", "POST"])
+@app.route('/register', methods = ["GET", "POST"])
 def register():
     form = RegisterForm()
     if request.method == 'POST':
         if form.validate_on_submit():
 
-            if User.query.filter(User.email == form.email.data).count()>0 :
+            if User.query.filter(User.email == form.email.data).count() > 0 :
                 form.email.errors.append(ApplicationMessages.User_Email_Already_In_Use)
                 return view('register', form)
 
             user = User(
-                name=form.name.data,
-                email=form.email.data,
-                password=form.password.data,
-                country_code=form.country_code.data,
-                phone_number=form.phone_number.data
+                name = form.name.data,
+                email = form.email.data,
+                password = form.password.data,
+                country_code = form.country_code.data,
+                phone_number = form.phone_number.data
             )
             db.session.add(user)
             db.session.commit()
@@ -40,7 +40,7 @@ def register():
             if AuthyServices().request_phone_confirmation_code(user):
                 db.session.commit()
                 flash(ApplicationMessages.Verification_Code_Sent)
-                return redirect_to('verify', email=form.email.data)
+                return redirect_to('verify', email = form.email.data)
 
             form.email.errors.append(ApplicationMessages.Verification_Code_Not_Sent)
 
@@ -49,8 +49,8 @@ def register():
 
     return view('register', form)  
 
-@app.route('/verify', methods=["GET", "POST"])
-@app.route('/verify/<email>', methods=["GET"])
+@app.route('/verify', methods = ["GET", "POST"])
+@app.route('/verify/<email>', methods = ["GET"])
 def verify():
     form = VerifyCodeForm()
     if request.method == 'POST':
@@ -68,7 +68,7 @@ def verify():
             if AuthyServices.new().confirm_phone_number(user, form.verification_code.data):
                 user.phone_number_confirmed = True
                 db.session.commit()
-                login_user(user, remember=True)
+                login_user(user, remember = True)
                 TwilioServices.new().send_registration_success_sms("+{0}{1}".format(user.country_code, user.phone_number))
                 return redirect_to('status')
             else:
@@ -78,9 +78,9 @@ def verify():
         form.email.data = request.args.get('email')
     return view('verify_registration_code', form)  
 
-@app.route('/resend', methods=["GET", "POST"])
-@app.route('/resend/<email>', methods=["GET"])
-def resend(email=""):
+@app.route('/resend', methods = ["GET", "POST"])
+@app.route('/resend/<email>', methods = ["GET"])
+def resend(email = ""):
     form = ResendCodeForm()
 
     if request.method == 'POST':
@@ -97,7 +97,7 @@ def resend(email=""):
 
             if AuthyServices().request_phone_confirmation_code(user):
                 flash(ApplicationMessages.Verification_Code_Resent)
-                return redirect_to('verify', email=form.email.data)
+                return redirect_to('verify', email = form.email.data)
             else:
                 form.email.errors.append(ApplicationMessages.Verification_Code_Not_Sent)
     else:
@@ -109,7 +109,7 @@ def resend(email=""):
 def status():
     return view('status')  
 
-@app.route('/logout', methods=["POST"])
+@app.route('/logout', methods = ["POST"])
 def logout():
     logout_user()
     return redirect_to('home') 

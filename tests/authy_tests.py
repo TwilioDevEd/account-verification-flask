@@ -57,11 +57,11 @@ class AuthyTests(BaseTestCase):
 
     def _get_test_user(self):
         return User(
-            name="User",
-            email="user@email.com",
-            password="pass",
-            country_code="1",
-            phone_number="554885225"
+            name = "User",
+            email = "user@email.com",
+            password = "pass",
+            country_code = "1",
+            phone_number = "554885225"
         )
     
 

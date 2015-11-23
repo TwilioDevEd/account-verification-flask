@@ -16,7 +16,7 @@ class ControllerHelperTests(BaseTestCase):
     # Ensures 'redirect_to' redirect you to the same place as 'redirect' with routes params
     def test_redirect_to_redirects_to_same_location_of_redirect_with_route_params(self):
         # assert
-        assert redirect_to('verify', email="user@email.com").location == redirect(url_for('verify',email="user@email.com")).location
+        assert redirect_to('verify', email = "user@email.com").location == redirect(url_for('verify',email = "user@email.com")).location
     
     # Ensures 'view' renders the same template that 'render_template' 
     def test_view_renders_the_same_template_as_render_template(self):
