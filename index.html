@@ -1,0 +1,200 @@
+<!DOCTYPE html><html><head><title>Account Verification</title><style>body, html {
+  height:100%;
+  width:100%;
+  padding:0;
+  margin:0;
+  overflow:hidden;
+  background-color:#ddd;
+}
+.wrapper {
+  height:100%;
+  width:100%;
+}</style><link rel="shortcut icon" href="//twilio.com/bundles/marketing/img/favicons/favicon.ico"><link rel="apple-touch-icon" href="//twilio.com/bundles/marketing/img/favicons/favicon_57.png"><link rel="apple-touch-icon" sizes="72x72" href="//twilio.com/bundles/marketing/img/favicons/favicon_72.png"><link rel="apple-touch-icon" sizes="114x114" href="//twilio.com/bundles/marketing/img/favicons/favicon_114.png"><link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"><link rel="stylesheet" href="viewsaurus.css"></head><body><div class="wrapper"><div id="viewsaurus" data-title="Account Verification"><div class="saurus-panes"><div class="saurus-prose"><div class="saurus-prose-header"><div class="title-outer"><span class="step-title">Account Verification</span></div></div><div class="saurus-nav-buttons"><div class="saurus-nav-button nav-overview"><div class="saurus-nav-button-inner"><i class="fa fa-fw fa-list"></i></div><div class="nav-divider"></div></div><div class="saurus-nav-button nav-previous"><div class="saurus-nav-button-inner"><a href=""> <i class="fa fa-fw fa-play fa-rotate-180"></i></a></div><div class="nav-divider"></div></div><div class="saurus-nav-button nav-next clickable"><div class="saurus-nav-button-inner"><a href="#1"> <i class="fa fa-fw fa-play"></i></a></div></div><div class="saurus-next-title"><span class="next-title-inner"></span></div></div><div class="saurus-progress-bar"></div><div class="saurus-start"><p>Learn to implement account verification in your web app with Twilio-powered Authy. Account verification helps you ensure your customer data is accurate and secure. This tutorial will show you the code to make it happen.</p><a href="#0">Start Tutorial</a></div><div class="saurus-content"><div data-title="Account Verification Flask" class="chapter"><div data-title="Introduction" data-file="account_verification_flask/__init__.py" class="step"><h2 id="introduction">Introduction</h2>
+<p>In this example, we&#39;re using the <a href="http://flask.pocoo.org/">Flask</a> framework for Python. Flask is a popular, lightweight
+web framework that provides HTTP request routing, server-side HTML rendering, and an extensible stack to
+process incoming requests.</p>
+<p>Ready to implement user account verification in your application? Here&#39;s how it works at a high level:</p>
+<ol>
+<li><p>The user begins the registration process by entering his/her data, including a phone number, into a signup form</p>
+</li>
+<li><p>The authentication system sends a one-time password to the user&#39;s mobile phone to verify their possession of that phone number</p>
+</li>
+<li><p>The user enters the one-time password into a form before completing registration</p>
+</li>
+<li><p>The user gets a success page and receives a SMS indicating that his/her account has been created</p>
+</li>
+</ol>
+<h2 id="building-blocks">Building Blocks</h2>
+<p>To get this done, you&#39;ll be working with the following Twilio-powered APIs:</p>
+<p><strong>Authy REST API</strong></p>
+<ul>
+<li><a href="//docs.authy.com/">Authy Docs</a>: Find quick starts, documentation, and all about the helper libraries.</li>
+</ul>
+<p><strong>Twilio REST API</strong></p>
+<ul>
+<li><a href="//www.twilio.com/docs/api/rest/sending-messages">Messages Resource</a>: We
+will use Twilio directly to send our user a confirmation message after they
+create an account</li>
+</ul>
+<p>Let&#39;s get started! Click the right arrow to move on to the next step of the tutorial.</p>
+</div><div data-title="Application configuration" data-file="account_verification_flask/config.py" class="step"><h2 id="application-configuration">Application configuration</h2>
+<p>For this application we&#39;ll be using the
+<a href="//www.twilio.com/docs/python/install">The Twilio Python Helper Library</a> and the
+<a href="//github.com/authy/authy-python">Python Client for Authy API</a>, which requires some configuration:</p>
+<p>You need to edit the <code>DevelopmentConfig</code> class constants values located in <code>account_verification_flask/config.py</code> file:</p>
+<pre><code>AUTHY_KEY = &#39;your_authy_key&#39;
+
+TWILIO_ACCOUNT_SID = &#39;your_twilio_account_sid&#39;
+TWILIO_AUTH_TOKEN = &#39;your_twilio_auth_token&#39;
+TWILIO_NUMBER = &#39;your_twilio_phone_number&#39;
+
+SQLALCHEMY_DATABASE_URI = &#39;sqlite://&#39;
+</code></pre><p>Note that you have to replace the placeholders <code>your_twilio_account_sid</code>, <code>your_twilio_auth_token</code>, <code>your_twilio_phone_number</code>
+and <code>your_authy_key</code> with your production information,
+which you can find in your <a href="/user/account">Twlio Account Dashboard</a> and your <a href="https://dashboard.authy.com/signup">Authy
+dashboard</a> respectively.</p>
+<p>Also, this application is being built using <a href="https://www.sqlite.org/">sqlite</a> as database engine. It&#39;s default configured
+to use in-memory storage because <a href="http://www.sqlalchemy.org/">SQLAlchemy</a>, the ORM used, requires
+absolutes path while defining sqlite&#39;s connection strings. We  encourage you to specify an <strong>always absolute path</strong> to a
+local sqlite DB file of your choice by editing the <code>SQLALCHEMY_DATABASE_URI</code> key value.</p>
+<p><strong>See Also:</strong></p>
+<ul>
+<li><a href="//pythonhosted.org/Flask-SQLAlchemy/">Using SQLAlchemy in Flask</a></li>
+</ul>
+</div><div data-title="User Model" data-file="account_verification_flask/models/models.py" class="step"><h2 id="the-user-model">The User Model</h2>
+<p>The User Model for this use-case is pretty straight-forward, the only property that deserves an explanation it&#39;s  <code>authy_user_id</code>,
+which is intended for storing the user&#39;s Authy identification token.</p>
+<p>Also, as we&#39;ll be using a library named
+<a href="https://flask-login.readthedocs.org/en/latest/">Flask-Login</a> for user&#39;s session management, we defined
+a couple of methods required to interact properly with it.</p>
+<p><strong>See Also:</strong></p>
+<ul>
+<li><a href="//flask-login.readthedocs.org/en/latest/#your-user-class">User model with Flask-Login </a></li>
+</ul>
+</div><div data-title="Registration Form" data-file="account_verification_flask/templates/register.html" data-highlight="9-26" data-mode="html" class="step"><h2 id="registration-form">Registration Form</h2>
+<p>During the registration of a new user, we ask for a name, an E-mail address, and a password.
+In order to validate user account, we also ask them for a mobile number
+with a country code, which we can use with Authy to send the verification code
+via SMS.</p>
+<p>In this example we use <a href="//github.com/wtforms/wtforms">WTForms</a> library for the purpose of forms validation and rendering, which allow us
+to define forms as classes.</p>
+<p>Here is how our <code>RegisterForm</code> class will look once finished:</p>
+<pre><code>class RegisterForm(Form):
+  name = TextField(
+      &#39;Tell us your name&#39;,
+      validators=[DataRequired(message=&quot;Name is required&quot;),
+                  Length(min=3,message=&quot;Name must greater than 3 chars&quot;)]
+  )
+  email = TextField(
+      &#39;Enter your E-mail&#39;,
+      validators=[DataRequired(&quot;E-mail is required&quot;),
+                  Email(message=&quot;Invalid E-mail address&quot;)]
+  )
+  password = PasswordField(
+      &#39;Password&#39;,
+      validators=[DataRequired(&quot;Password is required&quot;)]
+  )
+  country_code = TextField(
+      &#39;Country Code&#39;,
+      validators=[DataRequired(&quot;Country code is required&quot;),
+                  Length(min=1, max=4, message=&quot;Country must be between 1 and 4 chars&quot;)]
+  )
+  phone_number = IntegerField(
+      &#39;Phone Number&#39;,
+      validators=[DataRequired(&quot;Valid phone number is required&quot;)]
+  )
+</code></pre><p><strong>See Also:</strong></p>
+<ul>
+<li><a href="//flask.pocoo.org/docs/0.10/patterns/wtforms/">Form Validation with WTForms</a></li>
+</ul>
+</div><div data-title="Registration server side implementation" data-file="account_verification_flask/views.py" data-highlight="20-50" class="step"><h2 id="registration-server-side-implementation">Registration server side implementation</h2>
+<p>It&#39;s now the controller&#39;s responsibility to verify that the user provides the required information to
+create a new user. If all goes good the controller should persist it in the database, registers the user under
+Authy&#39;s API and requests the send of the verification code to the user through the <code>AuthyServices.new().request_phone_confirmation_code(user)</code>
+method invocation, which will be explained a few sections ahead.</p>
+<p>The flow finalizes with the redirect of the user to the verification code page.</p>
+</div><div data-title="Verification Form and UI" data-file="account_verification_flask/templates/verify_registration_code.html" data-highlight="5-35" data-mode="html" class="step"><h2 id="verification-form-and-ui">Verification Form and UI</h2>
+<p>As stated before, once the user completes the registration he/she gets redirected to the verification page, which you may access
+at any time using the route <code>/verify</code>. This page consists in a simple form where you can input your
+account E-mail address, to get identify as you, and the sent SMS verification code.</p>
+<p>Here is the code for the <code>VerifyCodeForm</code> class:</p>
+<pre><code>class VerifyCodeForm(ResendCodeForm):
+  verification_code = TextField(
+      &#39;Verification Code&#39;,
+      validators=[DataRequired(&quot;Verification code is required&quot;)]
+  )
+</code></pre></div><div data-title="Verification server side implementation" data-file="account_verification_flask/views.py" data-highlight="52-79" class="step"><h2 id="verification-server-side-implementation">Verification server side implementation</h2>
+<p>The server side implementation for the registration process confirmation ensures the given E-mail belongs to previously registered user which hasn&#39;t
+performed the verification process yet.</p>
+<p>From this moment the process have two critical steps:</p>
+<ol>
+<li><p>It communicates with Authy&#39;s API to check is the given code is correct.
+If verification is performed
+as positive, it signs in the user and performs the second critical step:</p>
+</li>
+<li><p>Send a confirmation SMS, using Twilio&#39;s API, to the user.</p>
+</li>
+</ol>
+<p>Finally it redirects the user to a success page.</p>
+<p>The communication to Authy&#39;s and Twilio&#39;s APIs will gets explained a few slides ahead.</p>
+</div><div data-title="Re send verification code" data-file="account_verification_flask/views.py" data-highlight="81-106" class="step"><h2 id="re-send-verification-code">Re send verification code</h2>
+<p>This is really really simple stuff. It consists in a simple form</p>
+<pre><code>class ResendCodeForm(Form):
+  email = TextField(
+      &#39;E-mail&#39;,
+      validators=[DataRequired(&quot;E-mail is required&quot;),
+                  Email(message=&quot;Invalid E-mail address&quot;)]
+  )
+</code></pre><p>that gets the user&#39;s
+E-mail, verifies if belongs to a previously registered user not verified yet and request a verification code to be sent to his/her
+registered mobile phone.</p>
+</div><div data-title="Request verification code" data-file="account_verification_flask/services/authy_services.py" data-highlight="13-21" class="step"><h2 id="request-verification-code">Request verification code</h2>
+<p>In order to end up with a cleaner and decoupled design we&#39;ll encapsulate all Authy&#39;s related features in a <code>AuthyService</code>.
+This class holds a shared class instance of the <code>AuthyApiClient</code> class.</p>
+<p>A send verification code request will begin with an invocation to <code>request_phone_confirmation_code</code> method. It will verify if the user exists
+and if it has an <code>authy_user_Id</code> value, fact that indicates it has been previously registered using Authy API. If not, we request the creation
+of a new Authy user to the <code>AuthyApiClient</code> instance which returns the <code>authy_user_Id</code> for the newly registered user, and updates it with that value.</p>
+<p>Finally, to order Authy to send the verification code to the user, we call the <code>request_sms</code> method on the <code>AuthyClient</code> instance passing it the user&#39;s
+<code>AuthyUserId</code> and a dictionary with a <code>True</code> value for a <code>force</code> key. This is mandatory because
+that way we force Authy to send an SMS explicitly, which may not happen according to the Authy&#39;s user profile settings and devices, if he/she
+is already and Authy&#39;s user, and the Authy&#39;s alternatives verification methods, but that&#39;s out of our scope.</p>
+</div><div data-title="Verification code confirmation" data-file="account_verification_flask/services/authy_services.py" data-highlight="23-28" class="step"><h2 id="verification-code-confirmation">Verification code confirmation</h2>
+<p>If you recall, the registration process confirmation is composed of two steps according to our
+<a href="//github.com/TwilioDevEd/account-verification-flask/blob/487b272b4993c6952f5d2b8cbc75eb75cefdad3c/account_verification_flask/views.py#L68-L73">controller</a>.
+The first one, confirming the verification code, get addressed as follows:</p>
+<p>We add a <code>confirm_phone_number</code> method to our <code>AuthyService</code> class. This method will call Authy API&#39;s <code>VerifyToken</code> method,
+which returns a <code>boolean</code> indicating if the code is correct.</p>
+<p>This method returns an <code>Boolean</code> object indicating the verification process&#39;s result. If positive, it will lead the controller
+to the second step of registration process confirmation.</p>
+</div><div data-title="Account confirmation notification" data-file="account_verification_flask/services/twilio_services.py" class="step"><h2 id="account-confirmation-notification">Account confirmation notification</h2>
+<p>The second step for registration process confirmation implies that once the verification code gets confirmed, the controller signs in the user and
+sends a registration confirmation notification using Twilio SMS API.</p>
+<p>As seen in the
+<a href="//github.com/TwilioDevEd/account-verification-flask/blob/487b272b4993c6952f5d2b8cbc75eb75cefdad3c/account_verification_flask/views.py#L72"><code>Views Controller</code></a>,
+this is achieved using ours <code>TwilioServices</code> class&#39;s <code>send_registration_success_sms</code>.</p>
+<p>This class follows the same philosophy of <code>AuthyServices</code> class and underneath uses a <code>TwilioRestClient</code> with our Twilio&#39;s preconfigured SID and Auth Token for
+sending an SMS to the messages&#39;s destination number, which in fact is the user&#39;s phone number, from our previously configured Twilio&#39;s number.</p>
+<p>Check the code in the right to see how it looks once finished and be aware, we are almost done.</p>
+</div><div data-title="Where to Next?" class="step"><h2 id="where-to-next-">Where to Next?</h2>
+<p>That&#39;s it! We&#39;ve just implemented account verification so your users can
+confirm the registration process through their phone number. If you&#39;re a Python/Flask developer working with Twilio,
+you might want to check out these other tutorials:</p>
+<p><a href="//www.twilio.com/docs/tutorials/walkthrough/appointment-reminders/python/flask"><strong>Appointment Reminders</strong></a></p>
+<p>Use Twilio to automate the process of reaching out to your customers in advance of an upcoming appointment.</p>
+<p><a href="//www.twilio.com/docs/tutorials/walkthrough/two-factor-authentication/python/flask"><strong>Two-Factor Authentication with Authy</strong></a></p>
+<p>Use Twilio and Twilio-powered Authy OneTouch to implement two-factor authentication (2FA) in your web app</p>
+<h3 id="did-this-help-">Did this help?</h3>
+<p>Thanks for checking out this tutorial! If you have any feedback to share
+with us, we&#39;d love to hear it. Tweet
+<a href="http://twitter.com/twilio">@twilio</a> to let us know what you think.</p>
+</div></div>
+<div class="saurus-files" style="display:none;"><textarea class="saurus-file" data-file="account_verification_flask/__init__.py" data-mode="python">77u/ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2sKZnJvbSBmbGFzay5leHQubG9naW4gaW1wb3J0IExvZ2luTWFuYWdlcgpmcm9tIGZsYXNrLmV4dC5zcWxhbGNoZW15IGltcG9ydCBTUUxBbGNoZW15CmZyb20gZmxhc2suZXh0LmJjcnlwdCBpbXBvcnQgQmNyeXB0CmZyb20gYWNjb3VudF92ZXJpZmljYXRpb25fZmxhc2suY29uZmlnIGltcG9ydCBjb25maWdfZW52X2ZpbGVzCgpkYiA9IFNRTEFsY2hlbXkoKQpiY3J5cHQgPSBCY3J5cHQoKQpsb2dpbl9tYW5hZ2VyID0gTG9naW5NYW5hZ2VyKCkKCmRlZiBjcmVhdGVfYXBwKGNvbmZpZ19uYW1lICA9ICdkZXZlbG9wbWVudCcsIHBfZGIgPSBkYiwgcF9iY3J5cHQgPSBiY3J5cHQsIHBfbG9naW5fbWFuYWdlciA9IGxvZ2luX21hbmFnZXIpOgogICAgbmV3X2FwcCA9IEZsYXNrKF9fbmFtZV9fKQogICAgbmV3X2FwcC5jb25maWcuZnJvbV9vYmplY3QoY29uZmlnX2Vudl9maWxlc1tjb25maWdfbmFtZV0pCgogICAgcF9kYi5pbml0X2FwcChuZXdfYXBwKQogICAgcF9iY3J5cHQuaW5pdF9hcHAobmV3X2FwcCkKICAgIHBfbG9naW5fbWFuYWdlci5pbml0X2FwcChuZXdfYXBwKQogICAgcF9sb2dpbl9tYW5hZ2VyLmxvZ2luX3ZpZXcgPSAncmVnaXN0ZXInCiAgICByZXR1cm4gbmV3X2FwcAoKYXBwID0gY3JlYXRlX2FwcCgpCgppbXBvcnQgYWNjb3VudF92ZXJpZmljYXRpb25fZmxhc2sudmlld3M=</textarea>
+<textarea class="saurus-file" data-file="account_verification_flask/config.py" data-mode="python">77u/Y2xhc3MgRGVmYXVsdENvbmZpZyhvYmplY3QpOgogICAgU0VDUkVUX0tFWSA9ICclXiFAQCohJiQ4eGRmZGlydW5iNTI0MzgjKCZeODc0QCNeJiooJEAqKEAmXkApKCYqKVlfKSgoKycKICAgIFNRTEFMQ0hFTVlfREFUQUJBU0VfVVJJID0gJ3NxbGl0ZTovLycKCmNsYXNzIERldmVsb3BtZW50Q29uZmlnKERlZmF1bHRDb25maWcpOgogICAgQVVUSFlfS0VZID0gJ3lvdXJfYXV0aHlfa2V5JwoKICAgIFRXSUxJT19BQ0NPVU5UX1NJRCA9ICd5b3VyX3R3aWxpb19hY2NvdW50X3NpZCcKICAgIFRXSUxJT19BVVRIX1RPS0VOID0gJ3lvdXJfdHdpbGlvX2F1dGhfdG9rZW4nCiAgICBUV0lMSU9fTlVNQkVSID0gJ3lvdXJfdHdpbGlvX3Bob25lX251bWJlcicKCiAgICBTUUxBTENIRU1ZX0RBVEFCQVNFX1VSSSA9ICdzcWxpdGU6Ly8nCiAgICBERUJVRyA9IFRydWUKCmNsYXNzIFRlc3RDb25maWcoRGVmYXVsdENvbmZpZyk6CiAgICBTUUxBTENIRU1ZX0VDSE8gPSBUcnVlCgogICAgREVCVUcgPSBUcnVlCiAgICBURVNUSU5HID0gVHJ1ZQogICAgV1RGX0NTUkZfRU5BQkxFRCA9IEZhbHNlCgpjb25maWdfZW52X2ZpbGVzID0gewogICAgJ3Rlc3QnOiAnYWNjb3VudF92ZXJpZmljYXRpb25fZmxhc2suY29uZmlnLlRlc3RDb25maWcnLAogICAgJ2RldmVsb3BtZW50JzogJ2FjY291bnRfdmVyaWZpY2F0aW9uX2ZsYXNrLmNvbmZpZy5EZXZlbG9wbWVudENvbmZpZycsCn0K</textarea>
+<textarea class="saurus-file" data-file="account_verification_flask/models/models.py" data-mode="python">77u/I2Zyb20gZmxhc2suZXh0LmxvZ2luIGltcG9ydCBVc2VyTWl4aW4KZnJvbSBhY2NvdW50X3ZlcmlmaWNhdGlvbl9mbGFzayBpbXBvcnQgZGIsIGJjcnlwdAoKY2xhc3MgVXNlcihkYi5Nb2RlbCk6CiAgICBfX3RhYmxlbmFtZV9fID0gInVzZXJzIgoKICAgIGlkID0gZGIuQ29sdW1uKGRiLkludGVnZXIsIHByaW1hcnlfa2V5ID0gVHJ1ZSkKICAgIG5hbWUgPSBkYi5Db2x1bW4oZGIuU3RyaW5nLCBudWxsYWJsZSA9IEZhbHNlKQogICAgZW1haWwgPSBkYi5Db2x1bW4oZGIuU3RyaW5nLCBudWxsYWJsZSA9IEZhbHNlKQogICAgcGFzc3dvcmQgPSBkYi5Db2x1bW4oZGIuU3RyaW5nKQogICAgcGhvbmVfbnVtYmVyID0gZGIuQ29sdW1uKGRiLlN0cmluZywgbnVsbGFibGUgPSBGYWxzZSkKICAgIGNvdW50cnlfY29kZSA9IGRiLkNvbHVtbihkYi5TdHJpbmcsIG51bGxhYmxlID0gRmFsc2UpCiAgICBwaG9uZV9udW1iZXJfY29uZmlybWVkID0gZGIuQ29sdW1uKGRiLkJvb2xlYW4sIG51bGxhYmxlID0gRmFsc2UsIGRlZmF1bHQgPSBGYWxzZSkKICAgIGF1dGh5X3VzZXJfaWQgPSBkYi5Db2x1bW4oZGIuU3RyaW5nLCBudWxsYWJsZSA9IFRydWUpCgogICAgZGVmIF9faW5pdF9fKHNlbGYsIG5hbWUsIGVtYWlsLCBwYXNzd29yZCwgcGhvbmVfbnVtYmVyLCBjb3VudHJ5X2NvZGUpOgogICAgICAgIHNlbGYubmFtZSA9IG5hbWUKICAgICAgICBzZWxmLmVtYWlsID0gZW1haWwKICAgICAgICBzZWxmLnBhc3N3b3JkID0gYmNyeXB0LmdlbmVyYXRlX3Bhc3N3b3JkX2hhc2gocGFzc3dvcmQpCiAgICAgICAgc2VsZi5waG9uZV9udW1iZXIgPSBwaG9uZV9udW1iZXIKICAgICAgICBzZWxmLmNvdW50cnlfY29kZSA9IGNvdW50cnlfY29kZQogICAgICAgIHNlbGYucGhvbmVfbnVtYmVyX2NvbmZpcm1lZCA9ICBGYWxzZQoKICAgIGRlZiBpc19hdXRoZW50aWNhdGVkKHNlbGYpOgogICAgICAgIHJldHVybiBUcnVlCiAKICAgIGRlZiBpc19hY3RpdmUoc2VsZik6CiAgICAgICAgcmV0dXJuIFRydWUKIAogICAgZGVmIGlzX2Fub255bW91cyhzZWxmKToKICAgICAgICByZXR1cm4gRmFsc2UKIAogICAgZGVmIGdldF9pZChzZWxmKToKICAgICAgICByZXR1cm4gdW5pY29kZShzZWxmLmlkKQogICAgICAgIAogICAgZGVmIF9fdW5pY29kZV9fKHNlbGYpOgogICAgICAgIHJldHVybiBzZWxmLm5hbWUKCiAgICBkZWYgX19yZXByX18oc2VsZik6CiAgICAgICAgcmV0dXJuICc8VXNlciAlcj4nICUgKHNlbGYubmFtZSkKICAgICAgICAgICAgCiAgICAgICAg</textarea>
+<textarea class="saurus-file" data-file="account_verification_flask/templates/register.html" data-mode="html">77u/eyUgZXh0ZW5kcyAibGF5b3V0Lmh0bWwiICV9Cgp7JSBibG9jayBjb250ZW50ICV9Cgo8aDE+V2UncmUgZ29pbmcgdG8gYmUgKkJFU1QqIGZyaWVuZHM8L2gxPgo8cD4gVGhhbmtzIGZvciB5b3VyIGludGVyZXN0IGluIHNpZ25pbmcgdXAhIENhbiB5b3UgdGVsbCB1cyBhIGJpdCBhYm91dCB5b3Vyc2VsZj88L3A+CgoKPGZvcm0gbWV0aG9kPSJQT1NUIiBjbGFzcz0iZm9ybS1ob3Jpem9udGFsIiByb2xlPSJmb3JtIj4KICAgIHslIGZyb20gIl9mb3JtaGVscGVycy5odG1sIiBpbXBvcnQgcmVuZGVyX2Vycm9ycywgcmVuZGVyX2ZpZWxkICV9CiAgICB7eyBmb3JtLmNzcmZfdG9rZW4gfX0KICAgIHt7IHJlbmRlcl9lcnJvcnMoZm9ybSkgfX0KICAgIDxoci8+CgogICAge3sgcmVuZGVyX2ZpZWxkKGZvcm0ubmFtZSwgcGxhY2Vob2xkZXI9J0FuYWtpbiBTa3l3YWxrZXInKSB9fQogICAge3sgcmVuZGVyX2ZpZWxkKGZvcm0uZW1haWwsIHBsYWNlaG9sZGVyPSdkYXJ0aEB2YWRlci5jb20nKSB9fQogICAge3sgcmVuZGVyX2ZpZWxkKGZvcm0ucGFzc3dvcmQpIH19CiAgICB7eyByZW5kZXJfZmllbGQoZm9ybS5jb3VudHJ5X2NvZGUsIGlkPSJhdXRoeS1jb3VudHJpZXMiICkgfX0KICAgIHt7IHJlbmRlcl9maWVsZChmb3JtLnBob25lX251bWJlciAsIHR5cGU9J251bWJlcicpIH19CgogICAgPGRpdiBjbGFzcz0iZm9ybS1ncm91cCI+CiAgICAgICAgPGRpdiBjbGFzcz0iY29sLW1kLW9mZnNldC0yIGNvbC1tZC0xMCI+CiAgICAgICAgICAgIDxpbnB1dCB0eXBlPSJzdWJtaXQiIGNsYXNzPSJidG4gYnRuLXByaW1hcnkiIHZhbHVlPSJTaWduIFVwIiAvPgogICAgICAgIDwvZGl2PgogICAgPC9kaXY+CjwvZm9ybT4KCnslIGVuZGJsb2NrICV9Cg==</textarea>
+<textarea class="saurus-file" data-file="account_verification_flask/views.py" data-mode="python">77u/ZnJvbSBkYXRldGltZSBpbXBvcnQgZGF0ZXRpbWUKZnJvbSBmbGFzayBpbXBvcnQgc2Vzc2lvbiwgcmVxdWVzdCwgZmxhc2gsIHVybF9mb3IsIGFib3J0ICxnCmZyb20gZmxhc2suZXh0LmxvZ2luIGltcG9ydCBsb2dpbl91c2VyICwgbG9nb3V0X3VzZXIsIGN1cnJlbnRfdXNlciwgbG9naW5fcmVxdWlyZWQKCmZyb20gYWNjb3VudF92ZXJpZmljYXRpb25fZmxhc2sgaW1wb3J0IGFwcCwgZGIsIGxvZ2luX21hbmFnZXIKZnJvbSBhY2NvdW50X3ZlcmlmaWNhdGlvbl9mbGFzay5mb3Jtcy5mb3JtcyBpbXBvcnQgUmVnaXN0ZXJGb3JtLCBSZXNlbmRDb2RlRm9ybSwgVmVyaWZ5Q29kZUZvcm0KZnJvbSAgYWNjb3VudF92ZXJpZmljYXRpb25fZmxhc2subW9kZWxzLm1vZGVscyBpbXBvcnQgVXNlcgpmcm9tIGFjY291bnRfdmVyaWZpY2F0aW9uX2ZsYXNrLnNlcnZpY2VzLmF1dGh5X3NlcnZpY2VzIGltcG9ydCBBdXRoeVNlcnZpY2VzCmZyb20gYWNjb3VudF92ZXJpZmljYXRpb25fZmxhc2suc2VydmljZXMudHdpbGlvX3NlcnZpY2VzIGltcG9ydCBUd2lsaW9TZXJ2aWNlcwoKZnJvbSBhY2NvdW50X3ZlcmlmaWNhdGlvbl9mbGFzay51dGlsaXRpZXMudmlld19oZWxwZXJzIGltcG9ydCAqCmltcG9ydCBhY2NvdW50X3ZlcmlmaWNhdGlvbl9mbGFzay51dGlsaXRpZXMKCgpAYXBwLnJvdXRlKCcvJykKQGFwcC5yb3V0ZSgnL2hvbWUnKQpkZWYgaG9tZSgpOgogICAgcmV0dXJuIHZpZXcoJ2luZGV4JykgIAoKQGFwcC5yb3V0ZSgnL3JlZ2lzdGVyJywgbWV0aG9kcyA9IFsiR0VUIiwgIlBPU1QiXSkKZGVmIHJlZ2lzdGVyKCk6CiAgICBmb3JtID0gUmVnaXN0ZXJGb3JtKCkKICAgIGlmIHJlcXVlc3QubWV0aG9kID09ICdQT1NUJzoKICAgICAgICBpZiBmb3JtLnZhbGlkYXRlX29uX3N1Ym1pdCgpOgoKICAgICAgICAgICAgaWYgVXNlci5xdWVyeS5maWx0ZXIoVXNlci5lbWFpbCA9PSBmb3JtLmVtYWlsLmRhdGEpLmNvdW50KCkgPiAwIDoKICAgICAgICAgICAgICAgIGZvcm0uZW1haWwuZXJyb3JzLmFwcGVuZChhY2NvdW50X3ZlcmlmaWNhdGlvbl9mbGFzay51dGlsaXRpZXMuVXNlcl9FbWFpbF9BbHJlYWR5X0luX1VzZSkKICAgICAgICAgICAgICAgIHJldHVybiB2aWV3KCdyZWdpc3RlcicsIGZvcm0pCgogICAgICAgICAgICB1c2VyID0gVXNlcigKICAgICAgICAgICAgICAgIG5hbWUgPSBmb3JtLm5hbWUuZGF0YSwKICAgICAgICAgICAgICAgIGVtYWlsID0gZm9ybS5lbWFpbC5kYXRhLAogICAgICAgICAgICAgICAgcGFzc3dvcmQgPSBmb3JtLnBhc3N3b3JkLmRhdGEsCiAgICAgICAgICAgICAgICBjb3VudHJ5X2NvZGUgPSBmb3JtLmNvdW50cnlfY29kZS5kYXRhLAogICAgICAgICAgICAgICAgcGhvbmVfbnVtYmVyID0gZm9ybS5waG9uZV9udW1iZXIuZGF0YQogICAgICAgICAgICApCiAgICAgICAgICAgIGRiLnNlc3Npb24uYWRkKHVzZXIpCiAgICAgICAgICAgIGRiLnNlc3Npb24uY29tbWl0KCkKICAgICAgICAgICAgCiAgICAgICAgICAgIGF1dGh5X3NlcnZpY2VzID0gQXV0aHlTZXJ2aWNlcygpCiAgICAgICAgICAgIGlmIGF1dGh5X3NlcnZpY2VzLnJlcXVlc3RfcGhvbmVfY29uZmlybWF0aW9uX2NvZGUodXNlcik6CiAgICAgICAgICAgICAgICBkYi5zZXNzaW9uLmNvbW1pdCgpCiAgICAgICAgICAgICAgICBmbGFzaChhY2NvdW50X3ZlcmlmaWNhdGlvbl9mbGFzay51dGlsaXRpZXMuVmVyaWZpY2F0aW9uX0NvZGVfU2VudCkKICAgICAgICAgICAgICAgIHJldHVybiByZWRpcmVjdF90bygndmVyaWZ5JywgZW1haWwgPSBmb3JtLmVtYWlsLmRhdGEpCgogICAgICAgICAgICBmb3JtLmVtYWlsLmVycm9ycy5hcHBlbmQoYWNjb3VudF92ZXJpZmljYXRpb25fZmxhc2sudXRpbGl0aWVzLlZlcmlmaWNhdGlvbl9Db2RlX05vdF9TZW50KQoKICAgICAgICBlbHNlOiAKICAgICAgICAgICAgcmV0dXJuIHZpZXcoJ3JlZ2lzdGVyJywgZm9ybSkKCiAgICByZXR1cm4gdmlldygncmVnaXN0ZXInLCBmb3JtKSAgCgpAYXBwLnJvdXRlKCcvdmVyaWZ5JywgbWV0aG9kcyA9IFsiR0VUIiwgIlBPU1QiXSkKQGFwcC5yb3V0ZSgnL3ZlcmlmeS88ZW1haWw+JywgbWV0aG9kcyA9IFsiR0VUIl0pCmRlZiB2ZXJpZnkoKToKICAgIGZvcm0gPSBWZXJpZnlDb2RlRm9ybSgpCiAgICBpZiByZXF1ZXN0Lm1ldGhvZCA9PSAnUE9TVCc6CiAgICAgICAgaWYgZm9ybS52YWxpZGF0ZV9vbl9zdWJtaXQoKToKICAgICAgICAgICAgdXNlciA9IFVzZXIucXVlcnkuZmlsdGVyKFVzZXIuZW1haWwgPT0gZm9ybS5lbWFpbC5kYXRhKS5maXJzdCgpCgogICAgICAgICAgICBpZiB1c2VyID09IE5vbmU6CiAgICAgICAgICAgICAgICBmb3JtLmVtYWlsLmVycm9ycy5hcHBlbmQoYWNjb3VudF92ZXJpZmljYXRpb25fZmxhc2sudXRpbGl0aWVzLlVzZXJfTm90X0ZvdW5kX0Zvcl9HaXZlbl9FbWFpbCkKICAgICAgICAgICAgICAgIHJldHVybiB2aWV3KCd2ZXJpZnlfcmVnaXN0cmF0aW9uX2NvZGUnLCBmb3JtKQoKICAgICAgICAgICAgaWYgdXNlci5waG9uZV9udW1iZXJfY29uZmlybWVkOgogICAgICAgICAgICAgICAgZm9ybS5lbWFpbC5lcnJvcnMuYXBwZW5kKFVzZXJfQWxyZWFkeV9Db25maXJtZWQpCiAgICAgICAgICAgICAgICByZXR1cm4gdmlldygndmVyaWZ5X3JlZ2lzdHJhdGlvbl9jb2RlJywgZm9ybSkKCiAgICAgICAgICAgIGF1dGh5X3NlcnZpY2VzID0gQXV0aHlTZXJ2aWNlcygpCiAgICAgICAgICAgIGlmIGF1dGh5X3NlcnZpY2VzLmNvbmZpcm1fcGhvbmVfbnVtYmVyKHVzZXIsIGZvcm0udmVyaWZpY2F0aW9uX2NvZGUuZGF0YSk6CiAgICAgICAgICAgICAgICB1c2VyLnBob25lX251bWJlcl9jb25maXJtZWQgPSBUcnVlCiAgICAgICAgICAgICAgICBkYi5zZXNzaW9uLmNvbW1pdCgpCiAgICAgICAgICAgICAgICBsb2dpbl91c2VyKHVzZXIsIHJlbWVtYmVyID0gVHJ1ZSkKICAgICAgICAgICAgICAgIHR3aWxpb19zZXJ2aWNlcyA9ICBUd2lsaW9TZXJ2aWNlcygpCiAgICAgICAgICAgICAgICB0d2lsaW9fc2VydmljZXMuc2VuZF9yZWdpc3RyYXRpb25fc3VjY2Vzc19zbXMoIit7MH17MX0iLmZvcm1hdCh1c2VyLmNvdW50cnlfY29kZSwgdXNlci5waG9uZV9udW1iZXIpKQogICAgICAgICAgICAgICAgcmV0dXJuIHJlZGlyZWN0X3RvKCdzdGF0dXMnKQogICAgICAgICAgICBlbHNlOgogICAgICAgICAgICAgICAgZm9ybS5lbWFpbC5lcnJvcnMuYXBwZW5kKGFjY291bnRfdmVyaWZpY2F0aW9uX2ZsYXNrLnV0aWxpdGllcy5WZXJpZmljYXRpb25fVW5zdWNjZXNzZnVsKQogICAgICAgICAgICAgICAgcmV0dXJuIHZpZXcoJ3ZlcmlmeV9yZWdpc3RyYXRpb25fY29kZScsIGZvcm0pCiAgICBlbHNlOgogICAgICAgIGZvcm0uZW1haWwuZGF0YSA9IHJlcXVlc3QuYXJncy5nZXQoJ2VtYWlsJykKICAgIHJldHVybiB2aWV3KCd2ZXJpZnlfcmVnaXN0cmF0aW9uX2NvZGUnLCBmb3JtKSAgCgpAYXBwLnJvdXRlKCcvcmVzZW5kJywgbWV0aG9kcyA9IFsiR0VUIiwgIlBPU1QiXSkKQGFwcC5yb3V0ZSgnL3Jlc2VuZC88ZW1haWw+JywgbWV0aG9kcyA9IFsiR0VUIl0pCmRlZiByZXNlbmQoZW1haWwgPSAiIik6CiAgICBmb3JtID0gUmVzZW5kQ29kZUZvcm0oKQoKICAgIGlmIHJlcXVlc3QubWV0aG9kID09ICdQT1NUJzoKICAgICAgICBpZiBmb3JtLnZhbGlkYXRlX29uX3N1Ym1pdCgpOgogICAgICAgICAgICB1c2VyID0gVXNlci5xdWVyeS5maWx0ZXIoVXNlci5lbWFpbCA9PSBmb3JtLmVtYWlsLmRhdGEpLmZpcnN0KCkKCiAgICAgICAgICAgIGlmIHVzZXIgPT0gTm9uZToKICAgICAgICAgICAgICAgIGZvcm0uZW1haWwuZXJyb3JzLmFwcGVuZChhY2NvdW50X3ZlcmlmaWNhdGlvbl9mbGFzay51dGlsaXRpZXMuVXNlcl9Ob3RfRm91bmRfRm9yX0dpdmVuX0VtYWlsKQogICAgICAgICAgICAgICAgcmV0dXJuIHZpZXcoJ3Jlc2VuZF9jb25maXJtYXRpb25fY29kZScsIGZvcm0pCgogICAgICAgICAgICBpZiB1c2VyLnBob25lX251bWJlcl9jb25maXJtZWQ6CiAgICAgICAgICAgICAgICBmb3JtLmVtYWlsLmVycm9ycy5hcHBlbmQoYWNjb3VudF92ZXJpZmljYXRpb25fZmxhc2sudXRpbGl0aWVzLlVzZXJfQWxyZWFkeV9Db25maXJtZWQpCiAgICAgICAgICAgICAgICByZXR1cm4gdmlldygncmVzZW5kX2NvbmZpcm1hdGlvbl9jb2RlJywgZm9ybSApCiAgICAgICAgICAgIGF1dGh5X3NlcnZpY2VzID0gQXV0aHlTZXJ2aWNlcygpCiAgICAgICAgICAgIGlmIGF1dGh5X3NlcnZpY2VzLnJlcXVlc3RfcGhvbmVfY29uZmlybWF0aW9uX2NvZGUodXNlcik6CiAgICAgICAgICAgICAgICBmbGFzaChhY2NvdW50X3ZlcmlmaWNhdGlvbl9mbGFzay51dGlsaXRpZXMuVmVyaWZpY2F0aW9uX0NvZGVfUmVzZW50KQogICAgICAgICAgICAgICAgcmV0dXJuIHJlZGlyZWN0X3RvKCd2ZXJpZnknLCBlbWFpbCA9IGZvcm0uZW1haWwuZGF0YSkKICAgICAgICAgICAgZWxzZToKICAgICAgICAgICAgICAgIGZvcm0uZW1haWwuZXJyb3JzLmFwcGVuZChhY2NvdW50X3ZlcmlmaWNhdGlvbl9mbGFzay51dGlsaXRpZXMuVmVyaWZpY2F0aW9uX0NvZGVfTm90X1NlbnQpCiAgICBlbHNlOgogICAgICAgIGZvcm0uZW1haWwuZGF0YSA9IGVtYWlsCgogICAgcmV0dXJuIHZpZXcoJ3Jlc2VuZF9jb25maXJtYXRpb25fY29kZScsIGZvcm0pIAoKQGFwcC5yb3V0ZSgnL3N0YXR1cycpCmRlZiBzdGF0dXMoKToKICAgIHJldHVybiB2aWV3KCdzdGF0dXMnKSAgCgpAYXBwLnJvdXRlKCcvbG9nb3V0JywgbWV0aG9kcyA9IFsiUE9TVCJdKQpkZWYgbG9nb3V0KCk6CiAgICBsb2dvdXRfdXNlcigpCiAgICByZXR1cm4gcmVkaXJlY3RfdG8oJ2hvbWUnKSAKCiMgY29udHJvbGxlciB1dGlscwpAYXBwLmJlZm9yZV9yZXF1ZXN0CmRlZiBiZWZvcmVfcmVxdWVzdCgpOgogICAgZy51c2VyID0gY3VycmVudF91c2VyCgpAbG9naW5fbWFuYWdlci51c2VyX2xvYWRlcgpkZWYgbG9hZF91c2VyIChpZCk6CiAgICB0cnk6CiAgICAgICAgcmV0dXJuIFVzZXIucXVlcnkuZ2V0KGlkKQogICAgZXhjZXB0OgogICAgICAgIHJldHVybiBOb25l</textarea>
+<textarea class="saurus-file" data-file="account_verification_flask/templates/verify_registration_code.html" data-mode="html">77u/eyUgZXh0ZW5kcyAibGF5b3V0Lmh0bWwiICV9Cgp7JSBibG9jayBjb250ZW50ICV9Cgo8Zm9ybSBtZXRob2Q9IlBPU1QiIGNsYXNzPSJmb3JtLWhvcml6b250YWwiIHJvbGU9ImZvcm0iIGFjdGlvbj0iL3ZlcmlmeSI+CiAgICB7JSBmcm9tICJfZm9ybWhlbHBlcnMuaHRtbCIgaW1wb3J0IHJlbmRlcl9lcnJvcnMsIHJlbmRlcl9maWVsZCAlfQogICAge3sgZm9ybS5jc3JmX3Rva2VuIH19CiAgICB7eyByZW5kZXJfZXJyb3JzKGZvcm0pIH19CiAgICA8aHIvPgoKICAgIHslIHdpdGggbWVzc2FnZXMgPSBnZXRfZmxhc2hlZF9tZXNzYWdlcygpICV9CiAgICB7JSBpZiBtZXNzYWdlcyAlfQogICAgPGRpdiBjbGFzcz0iYWxlcnQgYWxlcnQtaW5mbyI+CiAgICAgICAgeyUgZm9yIG1lc3NhZ2UgaW4gbWVzc2FnZXMgJX0KICAgICAgICB7eyBtZXNzYWdlIH19PGJyLz4KICAgICAgICB7JSBlbmRmb3IgJX0KICAgIDwvZGl2PgogICAgeyUgZW5kaWYgJX0KICAgIHslIGVuZHdpdGggJX0KICAgIAogICAge3sgcmVuZGVyX2ZpZWxkKGZvcm0uZW1haWwsIHBsYWNlaG9sZGVyPSdkYXJ0aEB2YWRlci5jb20nKSB9fQogICAge3sgcmVuZGVyX2ZpZWxkKGZvcm0udmVyaWZpY2F0aW9uX2NvZGUpIH19CgoKICAgIDxkaXYgY2xhc3M9ImZvcm0tZ3JvdXAiPgogICAgICAgIDxkaXYgY2xhc3M9ImNvbC1tZC1vZmZzZXQtMiBjb2wtbWQtMTAiPgogICAgICAgICAgICA8aW5wdXQgdHlwZT0ic3VibWl0IiBjbGFzcz0iYnRuIGJ0bi1kZWZhdWx0IiB2YWx1ZT0iU3VibWl0Ii8+CiAgICAgICAgPC9kaXY+CiAgICA8L2Rpdj4KICAgIDxkaXYgY2xhc3M9ImZvcm0tZ3JvdXAiPgogICAgICAgIDxkaXYgY2xhc3M9ImNvbC1tZC1vZmZzZXQtMiBjb2wtbWQtMTAiPgogICAgICAgICAgICA8YSBpZD0icmVzZW5kLWxpbmsiIGhyZWY9Int7IHVybF9mb3IoJ3Jlc2VuZCcsIGVtYWlsPSdfX18nKSB9fSI+UmVzZW5kIGNvZGU8L2E+CiAgICAgICAgPC9kaXY+CiAgICA8L2Rpdj4KPC9mb3JtPgoKeyUgZW5kYmxvY2sgJX0KCgp7JSBibG9jayBzY3JpcHRzICV9CjxzY3JpcHQ+CiAgICAgICAgJChmdW5jdGlvbiAoKSB7CiAgICAgICAgICAgICQoJyNyZXNlbmQtbGluaycpLmNsaWNrKGZ1bmN0aW9uIChlKSB7CiAgICAgICAgICAgICAgICB2YXIgZW1haWwgPSAkKCIjZW1haWwiKS52YWwoKTsKICAgICAgICAgICAgICAgIGNvbnNvbGUubG9nKGVtYWlsKTsKICAgICAgICAgICAgICAgIGNvbnNvbGUubG9nKHRoaXMuaHJlZik7CiAgICAgICAgICAgICAgICB0aGlzLmhyZWYgPSB0aGlzLmhyZWYucmVwbGFjZSgiX19fIiwgZW1haWwpOwogICAgICAgICAgICAgICAgY29uc29sZS5sb2codGhpcy5ocmVmKTsKICAgICAgICAgICAgfSk7CiAgICAgICAgfSk7Cjwvc2NyaXB0PgoKeyUgZW5kYmxvY2sgJX0=</textarea>
+<textarea class="saurus-file" data-file="account_verification_flask/services/authy_services.py" data-mode="python">77u/ZnJvbSBhdXRoeS5hcGkgaW1wb3J0IEF1dGh5QXBpQ2xpZW50CmZyb20gYWNjb3VudF92ZXJpZmljYXRpb25fZmxhc2sgaW1wb3J0IGFwcAppbXBvcnQgYWNjb3VudF92ZXJpZmljYXRpb25fZmxhc2sudXRpbGl0aWVzCmZyb20gYWNjb3VudF92ZXJpZmljYXRpb25fZmxhc2sudXRpbGl0aWVzLnNldHRpbmdzIGltcG9ydCBBdXRoeVNldHRpbmdzCgpjbGFzcyBBdXRoeVNlcnZpY2VzOgogICAgYXV0aHlfY2xpZW50ID0gTm9uZQoKICAgIGRlZiBfX2luaXRfXyhzZWxmKToKICAgICAgICBpZiBBdXRoeVNlcnZpY2VzLmF1dGh5X2NsaWVudCA9PSBOb25lOgogICAgICAgICAgICBBdXRoeVNlcnZpY2VzLmF1dGh5X2NsaWVudCA9IEF1dGh5QXBpQ2xpZW50KEF1dGh5U2V0dGluZ3Mua2V5KCkpCgogICAgZGVmIHJlcXVlc3RfcGhvbmVfY29uZmlybWF0aW9uX2NvZGUoc2VsZiwgdXNlcik6CiAgICAgICAgaWYgdXNlciA9PSBOb25lOgogICAgICAgICAgICByYWlzZSBWYWx1ZUVycm9yKGFjY291bnRfdmVyaWZpY2F0aW9uX2ZsYXNrLnV0aWxpdGllcy5Vc2VyX0lkX05vdF9Gb3VuZCkKCiAgICAgICAgaWYgdXNlci5hdXRoeV91c2VyX2lkID09IE5vbmU6CiAgICAgICAgICAgIHNlbGYuX3JlZ2lzdGVyX3VzZXJfdW5kZXJfYXV0aHkodXNlcikKCiAgICAgICAgc21zID0gQXV0aHlTZXJ2aWNlcy5hdXRoeV9jbGllbnQudXNlcnMucmVxdWVzdF9zbXModXNlci5hdXRoeV91c2VyX2lkLCB7J2ZvcmNlJzogVHJ1ZX0pCiAgICAgICAgcmV0dXJuIG5vdCBzbXMuaWdub3JlZCgpCgogICAgZGVmIGNvbmZpcm1fcGhvbmVfbnVtYmVyKHNlbGYsIHVzZXIsIHZlcmlmaWNhdGlvbl9jb2RlKToKICAgICAgICBpZiB1c2VyID09IE5vbmU6CiAgICAgICAgICAgIHJhaXNlIFZhbHVlRXJyb3IoYWNjb3VudF92ZXJpZmljYXRpb25fZmxhc2sudXRpbGl0aWVzLlVzZXJfSWRfTm90X0ZvdW5kKQoKICAgICAgICB2ZXJpZmljYXRpb24gPSBBdXRoeVNlcnZpY2VzLmF1dGh5X2NsaWVudC50b2tlbnMudmVyaWZ5KHVzZXIuYXV0aHlfdXNlcl9pZCwgdmVyaWZpY2F0aW9uX2NvZGUpCiAgICAgICAgcmV0dXJuIHZlcmlmaWNhdGlvbi5vaygpCgogICAgZGVmIF9yZWdpc3Rlcl91c2VyX3VuZGVyX2F1dGh5KHNlbGYsIHVzZXIpOgogICAgICAgIGF1dGh5X3VzZXIgPSBBdXRoeVNlcnZpY2VzLmF1dGh5X2NsaWVudC51c2Vycy5jcmVhdGUodXNlci5lbWFpbCwgdXNlci5waG9uZV9udW1iZXIsIHVzZXIuY291bnRyeV9jb2RlKQogICAgICAgIGlmIGF1dGh5X3VzZXIub2s6CiAgICAgICAgICAgIHVzZXIuYXV0aHlfdXNlcl9pZCA9IGF1dGh5X3VzZXIuaWQK</textarea>
+<textarea class="saurus-file" data-file="account_verification_flask/services/twilio_services.py" data-mode="python">77u/ZnJvbSBhdXRoeS5hcGkgaW1wb3J0IEF1dGh5QXBpQ2xpZW50CmZyb20gdHdpbGlvLnJlc3QgaW1wb3J0IFR3aWxpb1Jlc3RDbGllbnQKCmZyb20gYWNjb3VudF92ZXJpZmljYXRpb25fZmxhc2sgaW1wb3J0IGFwcAppbXBvcnQgYWNjb3VudF92ZXJpZmljYXRpb25fZmxhc2sudXRpbGl0aWVzCmZyb20gYWNjb3VudF92ZXJpZmljYXRpb25fZmxhc2sudXRpbGl0aWVzLnNldHRpbmdzIGltcG9ydCBBdXRoeVNldHRpbmdzLCBUd2lsaW9TZXR0aW5ncwoKY2xhc3MgVHdpbGlvU2VydmljZXM6CiAgICB0d2lsaW9fY2xpZW50ID0gTm9uZQoKICAgIGRlZiBfX2luaXRfXyhzZWxmKToKICAgICAgICBpZiBUd2lsaW9TZXJ2aWNlcy50d2lsaW9fY2xpZW50ID09IE5vbmU6CiAgICAgICAgICAgIFR3aWxpb1NlcnZpY2VzLnR3aWxpb19jbGllbnQgPSBUd2lsaW9SZXN0Q2xpZW50KFR3aWxpb1NldHRpbmdzLmFjY291bnRfc2lkKCksIFR3aWxpb1NldHRpbmdzLmF1dGhfdG9rZW4oKSkKCiAgICBkZWYgc2VuZF9yZWdpc3RyYXRpb25fc3VjY2Vzc19zbXMoc2VsZiwgdG9fbnVtYmVyKToKICAgICAgICBtZXNzYWdlID0gVHdpbGlvU2VydmljZXMudHdpbGlvX2NsaWVudC5tZXNzYWdlcy5jcmVhdGUoYm9keSA9IGFjY291bnRfdmVyaWZpY2F0aW9uX2ZsYXNrLnV0aWxpdGllcy5TaWdudXBfQ29tcGxldGUsCiAgICAgICAgICAgIHRvID0gdG9fbnVtYmVyLAogICAgICAgICAgICBmcm9tXyA9IFR3aWxpb1NldHRpbmdzLnBob25lX251bWJlcigpKSAK</textarea>
+</div>
+</div><div class="saurus-overview"><ul></ul></div></div><div class="saurus-code"><div class="file-path"><span class="crumb-container"></span><i class="fa fa-fw fa-folder"></i></div><div class="saurus-editor"></div></div><div class="saurus-explorer"><div class="saurus-file-list"></div><a href="https://github.com/TwilioDevEd/account-verification-flask" target="_blank" class="explorer-get-code"> <i class="fa fa-lg fa-github-square"> </i>View Code on GitHub</a></div></div></div></div><script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script><script src="ace/ace.js"></script><script src="ace/theme-monokai.js"></script><script src="viewsaurus.js"></script></body></html>
