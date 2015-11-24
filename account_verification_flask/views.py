@@ -36,8 +36,9 @@ def register():
             )
             db.session.add(user)
             db.session.commit()
-
-            if AuthyServices().request_phone_confirmation_code(user):
+            
+            authy_services = AuthyServices()
+            if authy_services.request_phone_confirmation_code(user):
                 db.session.commit()
                 flash(ApplicationMessages.Verification_Code_Sent)
                 return redirect_to('verify', email = form.email.data)
@@ -65,11 +66,13 @@ def verify():
                 form.email.errors.append(ApplicationMessages.User_Already_Confirmed)
                 return view('verify_registration_code', form)
 
-            if AuthyServices.new().confirm_phone_number(user, form.verification_code.data):
+            authy_services = AuthyServices()
+            if authy_services.confirm_phone_number(user, form.verification_code.data):
                 user.phone_number_confirmed = True
                 db.session.commit()
                 login_user(user, remember = True)
-                TwilioServices.new().send_registration_success_sms("+{0}{1}".format(user.country_code, user.phone_number))
+                twilio_services =  TwilioServices()
+                twilio_services.send_registration_success_sms("+{0}{1}".format(user.country_code, user.phone_number))
                 return redirect_to('status')
             else:
                 form.email.errors.append(ApplicationMessages.Verification_Unsuccessful)
@@ -94,8 +97,8 @@ def resend(email = ""):
             if user.phone_number_confirmed:
                 form.email.errors.append(ApplicationMessages.User_Already_Confirmed)
                 return view('resend_confirmation_code', form )
-
-            if AuthyServices().request_phone_confirmation_code(user):
+            authy_services = AuthyServices()
+            if authy_services.request_phone_confirmation_code(user):
                 flash(ApplicationMessages.Verification_Code_Resent)
                 return redirect_to('verify', email = form.email.data)
             else:

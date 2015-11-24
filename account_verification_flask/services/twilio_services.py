@@ -16,8 +16,3 @@ class TwilioServices:
         message = TwilioServices.twilio_client.messages.create(body = ApplicationMessages.Signup_Complete,
             to = to_number,
             from_ = TwilioSettings.phone_number()) 
-
-    @staticmethod
-    def new():
-        return TwilioServices()
-
