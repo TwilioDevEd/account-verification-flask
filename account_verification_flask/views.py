@@ -8,8 +8,8 @@ from  account_verification_flask.models.models import User
 from account_verification_flask.services.authy_services import AuthyServices
 from account_verification_flask.services.twilio_services import TwilioServices
 
-from account_verification_flask.utilities.messages import *
 from account_verification_flask.utilities.controller_helpers import *
+import account_verification_flask.utilities
 
 
 @app.route('/')
@@ -24,7 +24,7 @@ def register():
         if form.validate_on_submit():
 
             if User.query.filter(User.email == form.email.data).count() > 0 :
-                form.email.errors.append(ApplicationMessages.User_Email_Already_In_Use)
+                form.email.errors.append(account_verification_flask.utilities.User_Email_Already_In_Use)
                 return view('register', form)
 
             user = User(
@@ -40,10 +40,10 @@ def register():
             authy_services = AuthyServices()
             if authy_services.request_phone_confirmation_code(user):
                 db.session.commit()
-                flash(ApplicationMessages.Verification_Code_Sent)
+                flash(account_verification_flask.utilities.Verification_Code_Sent)
                 return redirect_to('verify', email = form.email.data)
 
-            form.email.errors.append(ApplicationMessages.Verification_Code_Not_Sent)
+            form.email.errors.append(account_verification_flask.utilities.Verification_Code_Not_Sent)
 
         else: 
             return view('register', form)
@@ -59,11 +59,11 @@ def verify():
             user = User.query.filter(User.email == form.email.data).first()
 
             if user == None:
-                form.email.errors.append(ApplicationMessages.User_Not_Found_For_Given_Email)
+                form.email.errors.append(account_verification_flask.utilities.User_Not_Found_For_Given_Email)
                 return view('verify_registration_code', form)
 
             if user.phone_number_confirmed:
-                form.email.errors.append(ApplicationMessages.User_Already_Confirmed)
+                form.email.errors.append(User_Already_Confirmed)
                 return view('verify_registration_code', form)
 
             authy_services = AuthyServices()
@@ -75,7 +75,7 @@ def verify():
                 twilio_services.send_registration_success_sms("+{0}{1}".format(user.country_code, user.phone_number))
                 return redirect_to('status')
             else:
-                form.email.errors.append(ApplicationMessages.Verification_Unsuccessful)
+                form.email.errors.append(account_verification_flask.utilities.Verification_Unsuccessful)
                 return view('verify_registration_code', form)
     else:
         form.email.data = request.args.get('email')
@@ -91,18 +91,18 @@ def resend(email = ""):
             user = User.query.filter(User.email == form.email.data).first()
 
             if user == None:
-                form.email.errors.append(ApplicationMessages.User_Not_Found_For_Given_Email)
+                form.email.errors.append(account_verification_flask.utilities.User_Not_Found_For_Given_Email)
                 return view('resend_confirmation_code', form)
 
             if user.phone_number_confirmed:
-                form.email.errors.append(ApplicationMessages.User_Already_Confirmed)
+                form.email.errors.append(account_verification_flask.utilities.User_Already_Confirmed)
                 return view('resend_confirmation_code', form )
             authy_services = AuthyServices()
             if authy_services.request_phone_confirmation_code(user):
-                flash(ApplicationMessages.Verification_Code_Resent)
+                flash(account_verification_flask.utilities.Verification_Code_Resent)
                 return redirect_to('verify', email = form.email.data)
             else:
-                form.email.errors.append(ApplicationMessages.Verification_Code_Not_Sent)
+                form.email.errors.append(account_verification_flask.utilities.Verification_Code_Not_Sent)
     else:
         form.email.data = email
 

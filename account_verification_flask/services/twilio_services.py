@@ -2,7 +2,7 @@
 from twilio.rest import TwilioRestClient
 
 from account_verification_flask import app
-from account_verification_flask.utilities.messages import ApplicationMessages
+import account_verification_flask.utilities
 from account_verification_flask.utilities.settings import AuthySettings, TwilioSettings
 
 class TwilioServices:
@@ -13,6 +13,6 @@ class TwilioServices:
             TwilioServices.twilio_client = TwilioRestClient(TwilioSettings.account_sid(), TwilioSettings.auth_token())
 
     def send_registration_success_sms(self, to_number):
-        message = TwilioServices.twilio_client.messages.create(body = ApplicationMessages.Signup_Complete,
+        message = TwilioServices.twilio_client.messages.create(body = account_verification_flask.utilities.Signup_Complete,
             to = to_number,
             from_ = TwilioSettings.phone_number()) 

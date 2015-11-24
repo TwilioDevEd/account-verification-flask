@@ -1,6 +1,6 @@
 ﻿from authy.api import AuthyApiClient
 from account_verification_flask import app
-from account_verification_flask.utilities.messages import ApplicationMessages
+import account_verification_flask.utilities
 from account_verification_flask.utilities.settings import AuthySettings
 
 class AuthyServices:
@@ -12,7 +12,7 @@ class AuthyServices:
 
     def request_phone_confirmation_code(self, user):
         if user == None:
-            raise ValueError(ApplicationMessages.User_Id_Not_Found)
+            raise ValueError(account_verification_flask.utilities.User_Id_Not_Found)
 
         if user.authy_user_id == None:
             self._register_user_under_authy(user)
@@ -22,7 +22,7 @@ class AuthyServices:
 
     def confirm_phone_number(self, user, verification_code):
         if user == None:
-            raise ValueError(ApplicationMessages.User_Id_Not_Found)
+            raise ValueError(account_verification_flask.utilities.User_Id_Not_Found)
 
         verification = AuthyServices.authy_client.tokens.verify(user.authy_user_id, verification_code)
         return verification.ok()
