@@ -1,7 +1,7 @@
-﻿from authy.api import AuthyApiClient
-from account_verification_flask import app
-import account_verification_flask.utilities
+﻿import account_verification_flask.utilities
 from account_verification_flask.utilities.settings import AuthySettings
+from authy.api import AuthyApiClient
+
 
 class AuthyServices:
     authy_client = None

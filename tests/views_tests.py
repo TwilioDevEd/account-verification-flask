@@ -1,8 +1,7 @@
 ﻿import unittest
-from flask.ext.login import current_user
-from flask import request, url_for
-from flask.testing import FlaskClient
+
 from base import BaseTestCase
+
 
 class ViewsTests(BaseTestCase):
     
