@@ -9,6 +9,3 @@ class BaseTestCase(TestCase):
 
     def create_app(self):
         return app
-
-    def setUp(self):
-        db.create_all()
