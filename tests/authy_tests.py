@@ -36,13 +36,13 @@ class AuthyTests(BaseTestCase):
         assert user.phone_number_confirmed == False
 
     def _get_authy_right_code_validator(self):
-        authy_service_mock = AuthyServices.new()
+        authy_service_mock = AuthyServices()
         authy_service_mock.confirm_phone_number = MagicMock(return_value = True, 
                                                             side_effect = self._confirm_phone_number_right_side_effect)
         return authy_service_mock
 
     def _get_authy_wrong_code_validator(self):
-        authy_service_mock = AuthyServices.new()
+        authy_service_mock = AuthyServices()
         authy_service_mock.confirm_phone_number = MagicMock(return_value = True, 
                                                             side_effect = self._confirm_phone_number_wrong_side_effect)
         return authy_service_mock

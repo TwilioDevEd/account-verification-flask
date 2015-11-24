@@ -8,7 +8,7 @@ from  account_verification_flask.models.models import User
 from account_verification_flask.services.authy_services import AuthyServices
 from account_verification_flask.services.twilio_services import TwilioServices
 
-from account_verification_flask.utilities.controller_helpers import *
+from account_verification_flask.utilities.view_helpers import *
 import account_verification_flask.utilities
 
 
