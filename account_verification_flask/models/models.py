@@ -33,9 +33,6 @@ class User(db.Model):
     def get_id(self):
         return unicode(self.id)
         
-    def confirm_phone_number(self):
-        self.phone_number_confirmed =  True
-
     def __unicode__(self):
         return self.name
 
