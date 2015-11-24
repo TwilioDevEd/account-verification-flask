@@ -16,7 +16,7 @@ class RegisterForm(Form):
         validators = [DataRequired("Password is required")]
     )
     country_code = TextField(
-        'Coundtry Code',
+        'Country Code',
         validators = [DataRequired("Country code is required"), Length(min = 1, max = 4, message = "Country must be between 1 and 4 chars")]
     )
 
