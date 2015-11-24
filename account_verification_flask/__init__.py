@@ -8,14 +8,10 @@ db = SQLAlchemy()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
 
-def create_app(config_name  = 'default', p_db = db, p_bcrypt = bcrypt, p_login_manager = login_manager):
+def create_app(config_name  = 'development', p_db = db, p_bcrypt = bcrypt, p_login_manager = login_manager):
     new_app = Flask(__name__)
-    new_app.config.from_object(config_env_files['default'])
+    new_app.config.from_object(config_env_files[config_name])
 
-    if not config_name == 'default':
-        new_app.config.from_object(config_env_files[config_name])
-        
-    new_app.config.from_object(config_env_files['local'])
     p_db.init_app(new_app)
     p_bcrypt.init_app(new_app)
     p_login_manager.init_app(new_app)
