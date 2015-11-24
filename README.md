@@ -30,7 +30,7 @@ To run the app locally, first clone this repository and `cd` into its directory.
     - If using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.org/en/latest/):
 
         ```
-        mkvirtualenv authy2fa-flask
+        mkvirtualenv account-verification-flask
         ```
 
 1. Install the requirements:
@@ -39,7 +39,7 @@ To run the app locally, first clone this repository and `cd` into its directory.
     pip install -r requirements.txt
     ```
 
-1. Edit the `local.py` file inside the  `account_verification_flask/config` directory. Be sure to replace the place holders and connection string with real information
+1. Edit the folowing keys/values for the `config.py` file inside the  `account_verification_flask/` directory. Be sure to replace the place holders and connection string with real information
 
     ```
     AUTHY_KEY = 'your_authy_key'
@@ -48,7 +48,7 @@ To run the app locally, first clone this repository and `cd` into its directory.
     TWILIO_AUTH_TOKEN = '[your_twilio_auth_token]'
     TWILIO_NUMBER = '[your_twilio_phone_number]'
 
-    SQLALCHEMY_DATABASE_URI = 'sqlite:////path/to/your/sqlite_db_file.db'
+    SQLALCHEMY_DATABASE_URI = 'sqlite://'
     ```
 
 1. Run the migrations with:

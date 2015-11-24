@@ -2,11 +2,11 @@
 from flask.ext.login import current_user
 from flask import request, redirect, url_for, render_template
 from flask.testing import FlaskClient
-from account_verification_flask.utilities.controller_helpers import redirect_to, view
+from account_verification_flask.utilities.view_helpers import redirect_to, view
 from base import BaseTestCase
 
 
-class ControllerHelperTests(BaseTestCase):
+class ViewHelperTests(BaseTestCase):
 
     # Ensures 'redirect_to' redirect you to the same place as 'redirect'
     def test_redirect_to_redirects_to_same_location_of_redirect(self):
