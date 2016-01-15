@@ -63,7 +63,7 @@ To run the app locally, first clone this repository and `cd` into its directory.
     python manage.py runserver
     ```
 
-That's it
+1. Go to [http://127.0.0.1:5000/](http://127.0.0.1:5000/). That's it
 
 ## Run the tests
 
