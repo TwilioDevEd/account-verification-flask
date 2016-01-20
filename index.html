@@ -53,10 +53,6 @@ SQLALCHEMY_DATABASE_URI = &#39;sqlite://&#39;
 and <code>your_authy_key</code> with your production information,
 which you can find in your <a href="/user/account">Twlio Account Dashboard</a> and your <a href="https://dashboard.authy.com/signup">Authy
 dashboard</a> respectively.</p>
-<p>Also, this application is being built using <a href="https://www.sqlite.org/">sqlite</a> as database engine. It&#39;s default configured
-to use in-memory storage because <a href="http://www.sqlalchemy.org/">SQLAlchemy</a>, the ORM used, requires
-absolutes path while defining sqlite&#39;s connection strings. We  encourage you to specify an <strong>always absolute path</strong> to a
-local sqlite DB file of your choice by editing the <code>SQLALCHEMY_DATABASE_URI</code> key value.</p>
 <p><strong>See Also:</strong></p>
 <ul>
 <li><a href="//pythonhosted.org/Flask-SQLAlchemy/">Using SQLAlchemy in Flask</a></li>
