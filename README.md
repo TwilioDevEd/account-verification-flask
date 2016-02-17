@@ -5,6 +5,8 @@
 This example application demonstrates how to implement Account Verification
 in a Python Flask application using [Authy](https://www.authy.com/developers/).
 
+[Read the full tutorial here](https://www.twilio.com/docs/tutorials/walkthrough/account-verification/python/flask)!
+
 ## Quickstart
 
 ### Create an Authy app
