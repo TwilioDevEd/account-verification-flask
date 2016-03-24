@@ -37,7 +37,7 @@ create an account</li>
 </div><div data-title="Application configuration" data-file="account_verification_flask/config.py" class="step"><h2 id="application-configuration">Application configuration</h2>
 <p>For this application we&#39;ll be using the
 <a href="//www.twilio.com/docs/python/install">The Twilio Python Helper Library</a> and the
-<a href="//github.com/authy/authy-python">Python Client for Authy API</a>, which requires some configuration:</p>
+<a href="//github.com/authy/authy-python">Python Client for Authy API</a>. It requires some configuration:</p>
 <p>You need to edit the <code>DevelopmentConfig</code> class constants values located in <code>account_verification_flask/config.py</code> file:</p>
 <pre><code>AUTHY_KEY = &#39;your_authy_key&#39;
 
@@ -47,16 +47,16 @@ TWILIO_NUMBER = &#39;your_twilio_phone_number&#39;
 
 SQLALCHEMY_DATABASE_URI = &#39;sqlite://&#39;
 </code></pre><p>Note that you have to replace the placeholders <code>your_twilio_account_sid</code>, <code>your_twilio_auth_token</code>, <code>your_twilio_phone_number</code>
-and <code>your_authy_key</code> with your production information,
-which you can find in your <a href="/user/account">Twlio Account Dashboard</a> and your <a href="https://dashboard.authy.com/signup">Authy
+and <code>your_authy_key</code> with your production information.
+You can find it in your <a href="/user/account">Twlio Account Dashboard</a> and your <a href="https://dashboard.authy.com/signup">Authy
 dashboard</a> respectively.</p>
 <p><strong>See Also:</strong></p>
 <ul>
 <li><a href="//pythonhosted.org/Flask-SQLAlchemy/">Using SQLAlchemy in Flask</a></li>
 </ul>
 </div><div data-title="User Model" data-file="account_verification_flask/models/models.py" class="step"><h2 id="the-user-model">The User Model</h2>
-<p>The User Model for this use-case is pretty straight-forward, the only property that deserves an explanation is the <code>authy_user_id</code>,
-which is intended for storing the user&#39;s Authy identification token.</p>
+<p>The User Model for this use-case is pretty straight-forward. The only property that deserves an explanation is the <code>authy_user_id</code>,
+which is implemented for storing the user&#39;s Authy identification token.</p>
 <p>We&#39;ll be using a library named
 <a href="https://flask-login.readthedocs.org/en/latest/">Flask-Login</a> for user session management.</p>
 <hr>
@@ -66,57 +66,57 @@ which is intended for storing the user&#39;s Authy identification token.</p>
 </ul>
 </div><div data-title="Registration Form" data-file="account_verification_flask/templates/register.html" data-highlight="9-26" data-mode="html" class="step"><h2 id="registration-form">Registration Form</h2>
 <p>First we register the user.
-In order to validate user account, we need a mobile number
-with a country code, which we can use with Authy to send the verification code
+In order to validate the user&#39;s account we need a mobile number
+with country code. We can use it with Authy to send the verification code
 via SMS.</p>
-<p>In this example we validate and render the forms with the <a href="//github.com/wtforms/wtforms">WTForms</a> library which allows us
-to define forms as classes.</p>
+<p>In this example we validate and render the forms with the <a href="//github.com/wtforms/wtforms">WTForms</a> library. This allows us
+to define the forms as classes.</p>
 <hr>
 <p><strong>See Also:</strong></p>
 <ul>
 <li><a href="//flask.pocoo.org/docs/0.10/patterns/wtforms/">Form Validation with WTForms</a></li>
 </ul>
 </div><div data-title="Registration server side implementation" data-file="account_verification_flask/views.py" data-highlight="20-50" class="step"><h2 id="registration-server-side-implementation">Registration server side implementation</h2>
-<p>Next our controller stores the user, registers her under Authy&#39;s API and requests a new verification code be sent to the user.</p>
+<p>Next our controller stores the user, registers it under Authy&#39;s API and requests a new verification code to be sent to the user.</p>
 <p>Finally we redirect to the <a href="//github.com/TwilioDevEd/account-verification-flask/templates/verify_registration_code.html">verification form</a>.</p>
 </div><div data-file="account_verification_flask/views.py" data-highlight="52-79" class="step"><h2 id="verifying-the-code">Verifying the Code</h2>
 <p>On the server we then check that the email belongs to a user that we haven&#39;t verified yet.</p>
 <p>From this moment the process has two critical steps:</p>
 <ol>
-<li><p>It communicates with Authy&#39;s API to check is the given code is correct.</p>
+<li><p>It communicates with Authy&#39;s API to check if the given code is correct.</p>
 </li>
-<li><p>Sends a confirmation SMS, using Twilio&#39;s API, to the user.</p>
+<li><p>Sends a confirmation SMS to the user using Twilio&#39;s API.</p>
 </li>
 </ol>
 <p>Finally it redirects the user to a success page.</p>
 <p>The communication to Authy&#39;s and Twilio&#39;s APIs will gets explained a few slides ahead.</p>
 </div><div data-title="Sending the code" data-file="account_verification_flask/views.py" data-highlight="85-110" class="step"><h2 id="sending-the-code">Sending the Code</h2>
-<p>Since the form for re-sending the code is one line, we&#39;re going to skip that for this tutorial. Let&#39;s just look at the controller function.</p>
+<p>Since the form for re-sending the code is one line, we&#39;re going to skip that for this tutorial. Let&#39;s just take a look at the controller function.</p>
 <p>This controller loads the <code>User</code> associated with the request and then
 uses the same Authy API method we used earlier to resend the code.
 Pretty straightforward!</p>
-<p>To wrap things up, let&#39;s implement the last step where we confirm for the
+<p>To wrap things up, let&#39;s implement the last step where we confirm to the
 user that their account has been verified with a text message and a success page.</p>
 </div><div data-title="Request verification code" data-file="account_verification_flask/services/authy_services.py" data-highlight="13-21" class="step"><h2 id="sending-a-token-on-account-creation">Sending a Token on Account Creation</h2>
 <p>In order to end up with a cleaner and decoupled design we&#39;ll encapsulate all Authy&#39;s related features in a <code>AuthyService</code>.
 This class holds a shared class instance of the <code>AuthyApiClient</code> class.</p>
-<p>Once the user has an <code>authyId</code>, we can actually send a verification code
-to that user&#39;s mobile phone. </p>
-<p>When our user is created successfully via the form we implemented, we send
+<p>Once the user has an <code>authyId</code> we can actually send a verification code
+to that user&#39;s mobile phone.</p>
+<p>When our user is created successfully, via the form we implemented, we send
 a token to the user&#39;s mobile phone to verify their account in our
-controller. When the code is sent, we redirect to another page where the
-user can enter the token they received, completing the verification process.</p>
+controller. When the code is sent, we redirect him to another page where
+he can enter the received token, completing the verification process.</p>
 <p>Let&#39;s check out the code for that next!</p>
 </div><div data-file="account_verification_flask/services/authy_services.py" data-highlight="23-28" class="step"><h2 id="verifying-the-code">Verifying the Code</h2>
 <p>Authy provides us with a <code>tokens.verify</code> method that allows us to pass a
-user id, and token. In this case we just
-need to check that the API request was successful and if so set
-a flag on the user that they were verified. </p>
+user id and token. In this case we just
+need to check that the API request was successful and if so, set
+a flag on the user that they were verified.</p>
 <p>That&#39;s all for token verification!</p>
 </div><div data-file="account_verification_flask/services/twilio_services.py" class="step"><h2 id="sending-the-confirmation-message">Sending the Confirmation Message</h2>
-<p>Much as we did for our Authy client, we create a single instance of the
-Twilio REST API helper, called <code>twilio_client</code> in this example.</p>
-<p>Then all we need to do to send an sms to the user&#39;s phone is use the built
+<p>Just as we did for our Authy client, we create a single instance of the
+Twilio REST API helper. It will be called <code>twilio_client</code> in this example.</p>
+<p>Then all we need to do is send an sms to the user&#39;s phone that was used
 in <code>messages.create()</code>.</p>
 <p>For more information on how to send SMS using Twilio&#39;s Rest API visit this
 <a href="//twilio-python.readthedocs.org/en/latest/usage/messages.html#sending-a-text-message">link</a>.</p>
