@@ -3,19 +3,15 @@
     :markdown
       ## Introduction
 
-      In this example, we're using the [Flask](http://flask.pocoo.org/) framework for Python. Flask is a popular, lightweight
-      web framework that provides HTTP request routing, server-side HTML rendering, and an extensible stack to
-      process incoming requests.
-
       Ready to implement user account verification in your application? Here's how it works at a high level:
 
-      1. The user begins the registration process by entering his/her data, including a phone number, into a signup form
+      1. The users begin the registration process by entering their data, including a phone number, into a signup form
 
-      1. The authentication system sends a one-time password to the user's mobile phone to verify their possession of that phone number
+      1. The authentication system sends a one-time password to the user's mobile phone to verify the possession of that phone number
 
       1. The user enters the one-time password into a form before completing registration
 
-      1. The user gets a success page and receives a SMS indicating that his/her account has been created
+      1. The user sees a success page and receives an SMS indicating that his/her account has been created
 
       ## Building Blocks
 
@@ -31,7 +27,7 @@
       create an account
 
       Let's get started! Click the right arrow to move on to the next step of the tutorial.
-
+      
   .step(data-title='Application configuration' data-file='account_verification_flask/config.py')
     :markdown
       ## Application configuration
@@ -69,6 +65,8 @@
       We'll be using a library named
       [Flask-Login](https://flask-login.readthedocs.org/en/latest/) for user session management.
 
+      ---
+      
       **See Also:**
 
       * [User model with Flask-Login ](//flask-login.readthedocs.org/en/latest/#your-user-class)
@@ -86,7 +84,7 @@
       In this example we validate and render the forms with the [WTForms](//github.com/wtforms/wtforms) library which allows us
       to define forms as classes.
 
-      ```
+      ---
 
       **See Also:**
 
@@ -196,6 +194,6 @@
 
       ### Did this help?
 
-      Thanks for checking out this tutorial! If you have any feedback to share
-      with us, we'd love to hear it. Tweet
-      [@twilio](http://twitter.com/twilio) to let us know what you think.
+      Thanks for checking out this tutorial! If you have any feedback
+      to share with us, we'd love to hear it.
+      [Contact support](//www.twilio.com/help/contact) to let us know what you think.
