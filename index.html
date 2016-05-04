@@ -48,7 +48,7 @@ TWILIO_NUMBER = &#39;your_twilio_phone_number&#39;
 SQLALCHEMY_DATABASE_URI = &#39;sqlite://&#39;
 </code></pre><p>Note that you have to replace the placeholders <code>your_twilio_account_sid</code>, <code>your_twilio_auth_token</code>, <code>your_twilio_phone_number</code>
 and <code>your_authy_key</code> with your production information.
-You can find it in your <a href="/user/account">Twlio Account Dashboard</a> and your <a href="https://dashboard.authy.com/signup">Authy
+You can find it in your <a href="/user/account">Twilio Account Dashboard</a> and your <a href="https://dashboard.authy.com/signup">Authy
 dashboard</a> respectively.</p>
 <p><strong>See Also:</strong></p>
 <ul>
@@ -76,7 +76,7 @@ to define the forms as classes.</p>
 <ul>
 <li><a href="//flask.pocoo.org/docs/0.10/patterns/wtforms/">Form Validation with WTForms</a></li>
 </ul>
-</div><div data-title="Registration server side implementation" data-file="account_verification_flask/views.py" data-highlight="20-50" class="step"><h2 id="registration-server-side-implementation">Registration server side implementation</h2>
+</div><div data-title="Registration Server Side Implementation" data-file="account_verification_flask/views.py" data-highlight="20-50" class="step"><h2 id="registration-server-side-implementation">Registration Server Side Implementation</h2>
 <p>Next our controller stores the user, registers it under Authy&#39;s API and requests a new verification code to be sent to the user.</p>
 <p>Finally we redirect to the <a href="//github.com/TwilioDevEd/account-verification-flask/templates/verify_registration_code.html">verification form</a>.</p>
 </div><div data-file="account_verification_flask/views.py" data-highlight="52-79" class="step"><h2 id="verifying-the-code">Verifying the Code</h2>
@@ -116,7 +116,7 @@ a flag on the user that they were verified.</p>
 </div><div data-file="account_verification_flask/services/twilio_services.py" class="step"><h2 id="sending-the-confirmation-message">Sending the Confirmation Message</h2>
 <p>Just as we did for our Authy client, we create a single instance of the
 Twilio REST API helper. It will be called <code>twilio_client</code> in this example.</p>
-<p>Then all we need to do is send an sms to the user&#39;s phone that was used
+<p>Then all we need to do is send an SMS to the user&#39;s phone that was used
 in <code>messages.create()</code>.</p>
 <p>For more information on how to send SMS using Twilio&#39;s Rest API visit this
 <a href="//twilio-python.readthedocs.org/en/latest/usage/messages.html#sending-a-text-message">link</a>.</p>

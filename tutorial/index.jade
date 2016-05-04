@@ -50,7 +50,7 @@
 
       Note that you have to replace the placeholders `your_twilio_account_sid`, `your_twilio_auth_token`, `your_twilio_phone_number`
       and `your_authy_key` with your production information.
-      You can find it in your [Twlio Account Dashboard](/user/account) and your [Authy
+      You can find it in your [Twilio Account Dashboard](/user/account) and your [Authy
       dashboard](https://dashboard.authy.com/signup) respectively.
 
       **See Also:**
@@ -93,9 +93,9 @@
       * [Form Validation with WTForms](//flask.pocoo.org/docs/0.10/patterns/wtforms/)
 
 
-  .step(data-title='Registration server side implementation' data-file='account_verification_flask/views.py', data-highlight='20-50')
+  .step(data-title='Registration Server Side Implementation' data-file='account_verification_flask/views.py', data-highlight='20-50')
     :markdown
-      ## Registration server side implementation
+      ## Registration Server Side Implementation
 
       Next our controller stores the user, registers it under Authy's API and requests a new verification code to be sent to the user.
 
@@ -168,7 +168,7 @@
       Just as we did for our Authy client, we create a single instance of the
       Twilio REST API helper. It will be called `twilio_client` in this example.
 
-      Then all we need to do is send an sms to the user's phone that was used
+      Then all we need to do is send an SMS to the user's phone that was used
       in `messages.create()`.
 
       For more information on how to send SMS using Twilio's Rest API visit this
