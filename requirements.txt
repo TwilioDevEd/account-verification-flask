@@ -30,7 +30,7 @@ pytz==2015.7
 requests==2.8.1
 selenium==2.48.0
 simplejson==3.8.1
-six==1.10.0
+six==1.13.0
 SQLAlchemy==1.0.9
 traceback2==1.4.0
 twilio==6.9.0
