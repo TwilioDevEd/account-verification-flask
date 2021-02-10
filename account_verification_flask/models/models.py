@@ -32,10 +32,10 @@ class User(db.Model):
         return False
 
     def get_id(self):
-        return unicode(self.id)
+        return str(self.id)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def __repr__(self):
-        return '<User %r>' % (self.name)
+        return f'<User: {self.name}>'

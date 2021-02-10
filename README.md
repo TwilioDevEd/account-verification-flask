@@ -1,9 +1,9 @@
 # Account Verification with Authy
 
-[![Build Status](https://travis-ci.org/TwilioDevEd/account-verification-flask.svg?branch=master)](https://travis-ci.org/TwilioDevEd/account-verification-flask)
+![Flask](https://github.com/TwilioDevEd/account-verification-flask/workflows/Flask/badge.svg)
 
 This application example demonstrates how to implement Account Verification
-on a Python Flask application using [Authy](https://www.authy.com/developers/).
+on a Python Flask application using [Authy](https://www.twilio.com/authy).
 
 [Read the full tutorial here](https://www.twilio.com/docs/tutorials/walkthrough/account-verification/python/flask)!
 
@@ -11,59 +11,54 @@ on a Python Flask application using [Authy](https://www.authy.com/developers/).
 
 ### Create an Authy app
 
-Create a free [Authy account](https://www.authy.com/developers/), if you don't
-have one already, and then connect it to your Twilio account.
+Create a free [Authy application](https://www.twilio.com/console/authy/applications), if you don't
+have one already.
 
 ### Local development
 
 This project is built using the [Flask](http://flask.pocoo.org/) web framework.
 For now, it only runs on Python 2.7 (not 3.4+).
 
-1. To run the app locally, clone this repository and `cd` into its.
+1. To run the app locally, clone this repository and `cd` into it.
 
-1. Create a new virtual environment:
+1. Create and activate a new python3 virtual environment.
 
-    - If using vanilla [virtualenv](https://virtualenv.pypa.io/en/latest/):
-
-        ```
-        virtualenv venv
-        source venv/bin/activate
-        ```
-
-    - If using [virtualenvwrapper](https://virtualenvwrapper.readthedocs.org/en/latest/):
-
-        ```
-        mkvirtualenv account-verification-flask
-        ```
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
 
 1. Install the requirements.
 
-    ```
+    ```bash
     pip install -r requirements.txt
     ```
 
-1. Edit the folowing keys/values for the `config.py` file inside the  `account_verification_flask/`
-   directory. Be sure to replace the connection string and place holders with real information.
+1. Copy the sample configuration file and edit it to match your configuration.
 
-    ```
-    AUTHY_KEY = 'your_authy_key'
+   ```bash
+   cp .env.example .env
+   ```
 
-    TWILIO_ACCOUNT_SID = '[your_twilio_account_sid]'
-    TWILIO_AUTH_TOKEN = '[your_twilio_auth_token]'
-    TWILIO_NUMBER = '[your_twilio_phone_number]'
-
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
-    ```
+   Twilio API credentials can be found [here](https://www.twilio.com/console) 
+   and find you can create a REST API Key [here](https://www.twilio.com/console/project/api-keys).
+   If using the twilio CLI you can run:
+   
+   ```bash
+   twilio api:core:keys:create --friendly-name=worm-transfer -o json
+   ```
+   
+   Copy or create a Twilio phone number from [here](https://www.twilio.com/console/phone-numbers).
 
 1. Run the migrations.
 
-    ```
+    ```bash
     python manage.py db upgrade
     ```
 
 1. Start the development server.
 
-    ```
+    ```bash
     python manage.py runserver
     ```
 
@@ -71,20 +66,14 @@ For now, it only runs on Python 2.7 (not 3.4+).
 
 That's it!
 
-## Run the tests
+## Run the tests locally.
 
-You can run the tests locally through [coverage](http://coverage.readthedocs.org/).
-
-1. Run the tests:
-
-    ```
-    $ coverage run manage.py test
-    ```
-
-You can then view the results with `coverage report` or build an HTML report with `coverage html`.
+   ```bash
+   python manage.py test
+   ```
 
 ## Meta
 
 * No warranty expressed or implied. Software is as is. Diggity.
-* [MIT License](http://www.opensource.org/licenses/mit-license.html)
+* [MIT License](LICENSE)
 * Lovingly crafted by Twilio Developer Education.
