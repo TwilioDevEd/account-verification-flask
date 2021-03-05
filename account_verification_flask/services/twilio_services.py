@@ -7,11 +7,16 @@ class TwilioServices:
     twilio_client = None
 
     def __init__(self):
-        if TwilioServices.twilio_client == None:
-            TwilioServices.twilio_client = Client(TwilioSettings.account_sid(), TwilioSettings.auth_token())
+        if TwilioServices.twilio_client is None:
+            TwilioServices.twilio_client = Client(
+                TwilioSettings.api_key(),
+                TwilioSettings.api_secret(),
+                TwilioSettings.account_sid(),
+            )
 
     def send_registration_success_sms(self, to_number):
-        message = TwilioServices.twilio_client.messages.create(
+        self.twilio_client.messages.create(
             body=account_verification_flask.utilities.Signup_Complete,
             to=to_number,
-            from_=TwilioSettings.phone_number())
+            from_=TwilioSettings.phone_number(),
+        )

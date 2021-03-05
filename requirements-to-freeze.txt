@@ -1,0 +1,23 @@
+# Flask
+Flask
+Flask-Bootstrap
+Flask-Bcrypt
+Flask-Login
+Flask-Migrate
+Flask-Script
+Flask-SQLAlchemy
+Flask-WTF
+
+# External libraries
+authy
+twilio
+python-dotenv
+email_validator
+
+# Testing
+Flask-Testing
+blinker
+
+# Development
+flake8
+black
