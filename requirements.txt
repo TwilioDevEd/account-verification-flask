@@ -1,4 +1,4 @@
-alembic==1.5.4
+alembic==1.5.6
 appdirs==1.4.4
 authy==2.2.6
 bcrypt==3.2.0
